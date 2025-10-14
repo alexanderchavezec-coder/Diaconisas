@@ -110,6 +110,9 @@ export default function Visitors() {
           <DialogContent data-testid="visitor-dialog">
             <DialogHeader>
               <DialogTitle>{editingVisitor ? 'Editar Visitante' : 'Nuevo Visitante'}</DialogTitle>
+              <DialogDescription>
+                {editingVisitor ? 'Actualiza la información del visitante' : 'Completa el formulario para registrar un nuevo visitante'}
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
