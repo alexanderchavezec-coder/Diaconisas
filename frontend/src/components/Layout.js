@@ -20,8 +20,12 @@ export default function Layout({ onLogout }) {
       <aside className="w-64 bg-gradient-to-b from-blue-600 to-purple-700 text-white flex flex-col shadow-2xl">
         <div className="p-6 border-b border-white/20">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-              <Church className="w-6 h-6" />
+            <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center p-2 shadow-lg">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_worship-check/artifacts/6sjlx750_adventist-symbol--earth.svg.svg" 
+                alt="Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <h1 className="text-xl font-bold">Control</h1>
