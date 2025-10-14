@@ -53,7 +53,7 @@ export default function Login({ onLogin }) {
             {isRegister ? 'Crear Cuenta' : 'Iniciar Sesión'}
           </CardTitle>
           <CardDescription className="text-base">
-            Sistema de Control de Asistencia
+            IASD Danbury - Control de Asistencia
           </CardDescription>
         </CardHeader>
         <CardContent>
