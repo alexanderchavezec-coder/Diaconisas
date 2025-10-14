@@ -13,17 +13,14 @@ import { Calendar, Save } from 'lucide-react';
 export default function Attendance() {
   const [members, setMembers] = useState([]);
   const [visitors, setVisitors] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendance, setAttendance] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  useEffect(() => {
     fetchAttendance();
-  }, [selectedDate]);
+  }, []);
 
   const fetchData = async () => {
     try {
