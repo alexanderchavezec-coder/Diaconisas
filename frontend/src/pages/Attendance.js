@@ -130,17 +130,28 @@ export default function Attendance() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Seleccionar Fecha
+            Fecha de Registro
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Input
-            data-testid="attendance-date-input"
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="max-w-xs h-11"
-          />
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 font-medium">Registrando asistencia para</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {new Date(selectedDate).toLocaleDateString('es-ES', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
