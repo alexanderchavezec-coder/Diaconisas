@@ -41,8 +41,12 @@ export default function Login({ onLogin }) {
       <Card className="w-full max-w-md shadow-2xl" data-testid="login-card">
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <Church className="w-10 h-10 text-white" />
+            <div className="w-24 h-24 rounded-full bg-white shadow-lg flex items-center justify-center p-3">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_worship-check/artifacts/6sjlx750_adventist-symbol--earth.svg.svg" 
+                alt="Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <CardTitle className="text-3xl font-bold">
