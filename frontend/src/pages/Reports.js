@@ -54,6 +54,10 @@ export default function Reports() {
     if (!reportData) return null;
 
     const { statistics, records } = reportData;
+    
+    // Separate present and absent records
+    const presentRecords = records.filter(r => r.presente);
+    const absentRecords = records.filter(r => !r.presente);
 
     return (
       <div className="space-y-6">
@@ -84,9 +88,81 @@ export default function Reports() {
           </Card>
         </div>
 
+        {/* Present List */}
         <Card>
           <CardHeader>
-            <CardTitle>Registros Detallados</CardTitle>
+            <CardTitle className="text-green-700 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              Asistentes ({presentRecords.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {presentRecords.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">No hay registros de asistencia</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {presentRecords.map((record, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 rounded-lg border border-green-200 bg-green-50"
+                  >
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{record.person_name}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          record.tipo === 'member' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                        }`}>
+                          {record.tipo === 'member' ? 'Miembro' : 'Visitante'}
+                        </span>
+                        <span className="text-xs text-gray-500">{record.fecha}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Absent List */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-red-700 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-red-500"></div>
+              Ausentes ({absentRecords.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {absentRecords.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">No hay registros de ausencias</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {absentRecords.map((record, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 rounded-lg border border-red-200 bg-red-50"
+                  >
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{record.person_name}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          record.tipo === 'member' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                        }`}>
+                          {record.tipo === 'member' ? 'Miembro' : 'Visitante'}
+                        </span>
+                        <span className="text-xs text-gray-500">{record.fecha}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Todos los Registros Detallados</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
