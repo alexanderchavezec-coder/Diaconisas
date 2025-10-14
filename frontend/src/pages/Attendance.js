@@ -47,6 +47,8 @@ export default function Attendance() {
       ]);
       setMembers(membersRes.data);
       setVisitors(visitorsRes.data);
+      setFilteredMembers(membersRes.data);
+      setFilteredVisitors(visitorsRes.data);
     } catch (error) {
       toast.error('Error al cargar datos');
     }
