@@ -13,6 +13,9 @@ import { Calendar, Save } from 'lucide-react';
 export default function Attendance() {
   const [members, setMembers] = useState([]);
   const [visitors, setVisitors] = useState([]);
+  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [filteredVisitors, setFilteredVisitors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendance, setAttendance] = useState({});
   const [loading, setLoading] = useState(false);
@@ -21,6 +24,20 @@ export default function Attendance() {
     fetchData();
     fetchAttendance();
   }, []);
+
+  useEffect(() => {
+    // Filter members
+    const filteredM = members.filter((member) =>
+      `${member.nombre} ${member.apellido}`.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredMembers(filteredM);
+
+    // Filter visitors
+    const filteredV = visitors.filter((visitor) =>
+      visitor.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredVisitors(filteredV);
+  }, [searchTerm, members, visitors]);
 
   const fetchData = async () => {
     try {
