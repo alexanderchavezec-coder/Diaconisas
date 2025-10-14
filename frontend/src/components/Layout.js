@@ -28,8 +28,8 @@ export default function Layout({ onLogout }) {
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold">Control</h1>
-              <p className="text-sm text-white/80">de Asistencia</p>
+              <h1 className="text-xl font-bold">IASD</h1>
+              <p className="text-sm text-white/80">Danbury</p>
             </div>
           </div>
         </div>
