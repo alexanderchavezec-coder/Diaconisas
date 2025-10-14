@@ -117,6 +117,9 @@ export default function Members() {
           <DialogContent data-testid="member-dialog">
             <DialogHeader>
               <DialogTitle>{editingMember ? 'Editar Miembro' : 'Nuevo Miembro'}</DialogTitle>
+              <DialogDescription>
+                {editingMember ? 'Actualiza la información del miembro' : 'Completa el formulario para registrar un nuevo miembro'}
+              </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
