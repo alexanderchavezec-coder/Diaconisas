@@ -418,32 +418,48 @@ export default function Reports() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {reportType === 'visitors-day' ? (
             <div className="space-y-2">
-              <Label>Fecha Inicial</Label>
+              <Label className="flex items-center gap-2">
+                <CalendarIcon className="h-4 w-4" />
+                Seleccionar Fecha para Visitantes
+              </Label>
               <Input
-                data-testid="report-start-date"
+                data-testid="visitors-date-input"
                 type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="h-11"
+                value={visitorsDate}
+                onChange={(e) => setVisitorsDate(e.target.value)}
+                className="h-11 max-w-xs"
               />
             </div>
-            <div className="space-y-2">
-              <Label>Fecha Final</Label>
-              <Input
-                data-testid="report-end-date"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="h-11"
-              />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Fecha Inicial</Label>
+                <Input
+                  data-testid="report-start-date"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Fecha Final</Label>
+                <Input
+                  data-testid="report-end-date"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="h-11"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <Button
             data-testid="generate-report-button"
-            onClick={generateReport}
+            onClick={reportType === 'visitors-day' ? generateVisitorsReport : generateReport}
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             size="lg"
