@@ -303,7 +303,8 @@ export default function Reports() {
       </div>
     );
   };
-    if (!reportData) return null;
+
+  const renderCollectiveReport = () => {
 
     const { by_date } = reportData;
     const chartData = Object.entries(by_date).map(([date, data]) => ({
