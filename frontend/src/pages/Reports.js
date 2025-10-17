@@ -67,9 +67,24 @@ export default function Reports() {
       );
       
       const presentVisitors = response.data.records.filter(r => r.presente);
+      
+      // Get full visitor details
+      const visitorsRes = await axios.get(`${API}/visitors`);
+      const allVisitors = visitorsRes.data;
+      
+      // Match and enrich visitor data
+      const enrichedVisitors = presentVisitors.map(record => {
+        const visitorDetail = allVisitors.find(v => v.id === record.person_id);
+        return {
+          name: record.person_name,
+          origin: visitorDetail?.de_donde_viene || 'No especificado',
+          date: record.fecha
+        };
+      });
+      
       setVisitorsData({
         date: visitorsDate,
-        visitors: presentVisitors
+        visitors: enrichedVisitors
       });
       setReportData(null);
       toast.success('Reporte de visitantes generado');
