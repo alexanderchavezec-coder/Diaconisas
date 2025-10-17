@@ -261,7 +261,8 @@ export default function Reports() {
 
     return (
       <div className="space-y-6">
-        <Card className="print:shadow-none">
+        {/* Screen version */}
+        <Card className="print:hidden">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-2xl">Reporte de Visitantes</CardTitle>
@@ -276,7 +277,7 @@ export default function Reports() {
             </div>
             <Button
               onClick={printVisitorsReport}
-              className="print:hidden bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700"
               data-testid="print-visitors-button"
             >
               <Printer className="mr-2 h-4 w-4" />
@@ -299,14 +300,14 @@ export default function Reports() {
                   {visitors.map((visitor, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-3 p-4 rounded-lg border border-purple-200 bg-purple-50 print:border print:border-gray-300 print:bg-white"
+                      className="flex items-center gap-3 p-4 rounded-lg border border-purple-200 bg-purple-50"
                     >
-                      <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold print:bg-gray-700">
+                      <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
                         {index + 1}
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900 text-lg">{visitor.person_name}</p>
-                        <p className="text-sm text-gray-600">{visitor.fecha}</p>
+                        <p className="font-semibold text-gray-900 text-lg">{visitor.name}</p>
+                        <p className="text-sm text-gray-600">{visitor.origin}</p>
                       </div>
                     </div>
                   ))}
@@ -315,6 +316,47 @@ export default function Reports() {
             )}
           </CardContent>
         </Card>
+
+        {/* Print version - Simple and clean */}
+        <div className="hidden print:block print-content">
+          <div className="text-center mb-8 pb-4 border-b-2 border-gray-800">
+            <h1 className="text-3xl font-bold mb-2" style={{fontFamily: 'Playfair Display, serif'}}>
+              Reporte de Visitantes
+            </h1>
+            <p className="text-lg text-gray-700">
+              {new Date(date).toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </p>
+          </div>
+
+          {visitors.length === 0 ? (
+            <p className="text-center text-gray-600 py-8">
+              No hay visitantes registrados para esta fecha
+            </p>
+          ) : (
+            <ol className="space-y-3" style={{listStyleType: 'decimal', paddingLeft: '0'}}>
+              {visitors.map((visitor, index) => (
+                <li key={index} className="flex items-start py-3 border-b border-gray-300" style={{display: 'flex', alignItems: 'flex-start'}}>
+                  <span className="font-bold text-xl mr-4 text-gray-700" style={{minWidth: '35px', display: 'inline-block'}}>
+                    {index + 1}.
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-xl font-semibold text-gray-900 mb-1">
+                      {visitor.name}
+                    </p>
+                    <p className="text-base text-gray-600 italic">
+                      De: {visitor.origin}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
       </div>
     );
   };
