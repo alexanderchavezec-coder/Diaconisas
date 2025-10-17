@@ -45,12 +45,43 @@ export default function Reports() {
         );
       }
       setReportData(response.data);
+      setVisitorsData(null);
       toast.success('Reporte generado exitosamente');
     } catch (error) {
       toast.error('Error al generar reporte');
     } finally {
       setLoading(false);
     }
+  };
+
+  const generateVisitorsReport = async () => {
+    if (!visitorsDate) {
+      toast.error('Por favor selecciona una fecha');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${API}/reports/by-date-range?start=${visitorsDate}&end=${visitorsDate}&tipo=visitor`
+      );
+      
+      const presentVisitors = response.data.records.filter(r => r.presente);
+      setVisitorsData({
+        date: visitorsDate,
+        visitors: presentVisitors
+      });
+      setReportData(null);
+      toast.success('Reporte de visitantes generado');
+    } catch (error) {
+      toast.error('Error al generar reporte');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const printVisitorsReport = () => {
+    window.print();
   };
 
   const renderDateRangeReport = () => {
