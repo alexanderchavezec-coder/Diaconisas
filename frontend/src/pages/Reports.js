@@ -475,6 +475,12 @@ export default function Reports() {
           {reportType === 'collective' && renderCollectiveReport()}
         </div>
       )}
+
+      {visitorsData && (
+        <div data-testid="visitors-report-results">
+          {renderVisitorsReport()}
+        </div>
+      )}
     </div>
   );
 }
