@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Calendar, Save } from 'lucide-react';
+import { Calendar, Save, Search } from 'lucide-react';
 
 export default function Attendance() {
   const [members, setMembers] = useState([]);
