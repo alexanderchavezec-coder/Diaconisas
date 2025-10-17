@@ -239,7 +239,70 @@ export default function Reports() {
     );
   };
 
-  const renderCollectiveReport = () => {
+  const renderVisitorsReport = () => {
+    if (!visitorsData) return null;
+
+    const { date, visitors } = visitorsData;
+
+    return (
+      <div className="space-y-6">
+        <Card className="print:shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl">Reporte de Visitantes</CardTitle>
+              <p className="text-gray-600 mt-2">
+                {new Date(date).toLocaleDateString('es-ES', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+            </div>
+            <Button
+              onClick={printVisitorsReport}
+              className="print:hidden bg-blue-600 hover:bg-blue-700"
+              data-testid="print-visitors-button"
+            >
+              <Printer className="mr-2 h-4 w-4" />
+              Imprimir
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {visitors.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">
+                No hay visitantes registrados para esta fecha
+              </p>
+            ) : (
+              <div>
+                <div className="mb-4 pb-4 border-b">
+                  <p className="text-lg font-semibold">
+                    Total de Visitantes: <span className="text-purple-600">{visitors.length}</span>
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {visitors.map((visitor, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-4 rounded-lg border border-purple-200 bg-purple-50 print:border print:border-gray-300 print:bg-white"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold print:bg-gray-700">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 text-lg">{visitor.person_name}</p>
+                        <p className="text-sm text-gray-600">{visitor.fecha}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
     if (!reportData) return null;
 
     const { by_date } = reportData;
