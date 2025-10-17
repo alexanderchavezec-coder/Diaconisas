@@ -174,6 +174,32 @@ export default function Attendance() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Search className="h-5 w-5" />
+            Buscar Persona
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <Input
+              data-testid="attendance-search-input"
+              placeholder="Buscar por nombre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-12 text-base"
+            />
+          </div>
+          {searchTerm && (
+            <p className="text-sm text-gray-500 mt-2">
+              Mostrando resultados para: <span className="font-semibold">{searchTerm}</span>
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       <Tabs defaultValue="members" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="members" data-testid="tab-members">Miembros</TabsTrigger>
@@ -182,17 +208,17 @@ export default function Attendance() {
         <TabsContent value="members">
           <Card>
             <CardHeader>
-              <CardTitle>Miembros ({members.length})</CardTitle>
+              <CardTitle>Miembros ({filteredMembers.length})</CardTitle>
             </CardHeader>
-            <CardContent>{renderAttendanceList(members, 'member')}</CardContent>
+            <CardContent>{renderAttendanceList(filteredMembers, 'member')}</CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="visitors">
           <Card>
             <CardHeader>
-              <CardTitle>Visitantes ({visitors.length})</CardTitle>
+              <CardTitle>Visitantes ({filteredVisitors.length})</CardTitle>
             </CardHeader>
-            <CardContent>{renderAttendanceList(visitors, 'visitor')}</CardContent>
+            <CardContent>{renderAttendanceList(filteredVisitors, 'visitor')}</CardContent>
           </Card>
         </TabsContent>
       </Tabs>
