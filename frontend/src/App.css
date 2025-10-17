@@ -4,12 +4,15 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   font-family: 'Inter', sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -18,6 +21,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .App {
   min-height: 100vh;
+}
+
+/* Touch-friendly styles for iPad and mobile */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+input, select, textarea {
+  font-size: 16px; /* Prevent zoom on iOS */
 }
 
 /* Scrollbar styling */
@@ -63,4 +75,51 @@ h1, h2, h3, h4, h5, h6 {
 .card-hover:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+  }
+  
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  .print\\:shadow-none {
+    box-shadow: none !important;
+  }
+  
+  .print\\:border {
+    border: 1px solid #000 !important;
+  }
+  
+  .print\\:border-gray-300 {
+    border-color: #d1d5db !important;
+  }
+  
+  .print\\:bg-white {
+    background-color: white !important;
+  }
+  
+  .print\\:bg-gray-700 {
+    background-color: #374151 !important;
+  }
+  
+  /* Hide navigation and non-essential elements */
+  aside, nav, .no-print {
+    display: none !important;
+  }
+  
+  /* Adjust page layout */
+  main {
+    width: 100% !important;
+    padding: 20px !important;
+  }
+  
+  /* Prevent page breaks inside elements */
+  .print-keep-together {
+    page-break-inside: avoid;
+  }
 }
