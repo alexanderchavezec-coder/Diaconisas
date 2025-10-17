@@ -396,6 +396,7 @@ export default function Reports() {
                 <SelectContent>
                   <SelectItem value="date-range">Por Rango de Fecha</SelectItem>
                   <SelectItem value="collective">Colectivo (Gráfico)</SelectItem>
+                  <SelectItem value="visitors-day">Visitantes del Día</SelectItem>
                 </SelectContent>
               </Select>
             </div>
