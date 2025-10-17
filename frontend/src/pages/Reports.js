@@ -338,19 +338,19 @@ export default function Reports() {
               No hay visitantes registrados para esta fecha
             </p>
           ) : (
-            <ol className="space-y-3" style={{listStyleType: 'decimal', paddingLeft: '0'}}>
+            <ol className="space-y-2" style={{listStyleType: 'decimal', paddingLeft: '0'}}>
               {visitors.map((visitor, index) => (
-                <li key={index} className="flex items-start py-3 border-b border-gray-300" style={{display: 'flex', alignItems: 'flex-start'}}>
-                  <span className="font-bold text-xl mr-4 text-gray-700" style={{minWidth: '35px', display: 'inline-block'}}>
+                <li key={index} className="py-2 border-b border-gray-300" style={{display: 'flex', alignItems: 'center'}}>
+                  <span className="font-bold text-lg mr-3 text-gray-700" style={{minWidth: '35px', display: 'inline-block'}}>
                     {index + 1}.
                   </span>
                   <div className="flex-1">
-                    <p className="text-xl font-semibold text-gray-900 mb-1">
+                    <span className="text-lg font-semibold text-gray-900">
                       {visitor.name}
-                    </p>
-                    <p className="text-base text-gray-600 italic">
-                      De: {visitor.origin}
-                    </p>
+                    </span>
+                    <span className="text-base text-gray-600 ml-3">
+                      - De: <span className="italic">{visitor.origin}</span>
+                    </span>
                   </div>
                 </li>
               ))}
