@@ -15,12 +15,15 @@ export default function Reports() {
   const today = new Date();
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
   const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+  const todayDate = today.toISOString().split('T')[0];
   
   const [reportType, setReportType] = useState('date-range');
   const [startDate, setStartDate] = useState(firstDay);
   const [endDate, setEndDate] = useState(lastDay);
+  const [visitorsDate, setVisitorsDate] = useState(todayDate);
   const [tipo, setTipo] = useState('all');
   const [reportData, setReportData] = useState(null);
+  const [visitorsData, setVisitorsData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const generateReport = async () => {
