@@ -5,7 +5,7 @@ import axios from 'axios';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Members from './pages/Members';
-import Visitors from './pages/Visitors';
+import Friends from './pages/Friends';
 import Attendance from './pages/Attendance';
 import Reports from './pages/Reports';
 import Layout from './components/Layout';
@@ -73,7 +73,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="members" element={<Members />} />
-            <Route path="visitors" element={<Visitors />} />
+            <Route path="friends" element={<Friends />} />
             <Route path="attendance" element={<Attendance />} />
             <Route path="reports" element={<Reports />} />
           </Route>

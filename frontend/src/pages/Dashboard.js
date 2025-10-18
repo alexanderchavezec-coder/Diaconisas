@@ -38,11 +38,11 @@ export default function Dashboard() {
       testId: 'stat-total-members',
     },
     {
-      title: 'Total Visitantes',
+      title: 'Total Amigos',
       value: stats.total_visitors,
       icon: UserPlus,
       color: 'from-purple-500 to-purple-600',
-      testId: 'stat-total-visitors',
+      testId: 'stat-total-friends',
     },
     {
       title: 'Asistencia Hoy',
@@ -107,7 +107,7 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <p className="text-gray-600 text-base leading-relaxed">
-            Este sistema te permite gestionar miembros, visitantes y llevar un control completo de la asistencia de tu iglesia.
+            Este sistema te permite gestionar miembros, amigos y llevar un control completo de la asistencia de tu iglesia.
             Utiliza el menú lateral para navegar entre las diferentes secciones.
           </p>
         </CardContent>
