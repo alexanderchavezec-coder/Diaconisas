@@ -12,9 +12,9 @@ import { Calendar, Save, Search } from 'lucide-react';
 
 export default function Attendance() {
   const [members, setMembers] = useState([]);
-  const [visitors, setVisitors] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
-  const [filteredVisitors, setFilteredVisitors] = useState([]);
+  const [filteredFriends, setFilteredFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendance, setAttendance] = useState({});
@@ -32,23 +32,23 @@ export default function Attendance() {
     );
     setFilteredMembers(filteredM);
 
-    // Filter visitors
-    const filteredV = visitors.filter((visitor) =>
-      visitor.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    // Filter friends
+    const filteredV = friends.filter((friend) =>
+      friend.nombre.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredVisitors(filteredV);
-  }, [searchTerm, members, visitors]);
+    setFilteredFriends(filteredV);
+  }, [searchTerm, members, friends]);
 
   const fetchData = async () => {
     try {
-      const [membersRes, visitorsRes] = await Promise.all([
+      const [membersRes, friendsRes] = await Promise.all([
         axios.get(`${API}/members`),
-        axios.get(`${API}/visitors`),
+        axios.get(`${API}/friends`),
       ]);
       setMembers(membersRes.data);
-      setVisitors(visitorsRes.data);
+      setFriends(friendsRes.data);
       setFilteredMembers(membersRes.data);
-      setFilteredVisitors(visitorsRes.data);
+      setFilteredFriends(friendsRes.data);
     } catch (error) {
       toast.error('Error al cargar datos');
     }
@@ -77,7 +77,7 @@ export default function Attendance() {
     try {
       const allPeople = [
         ...members.map((m) => ({ tipo: 'member', id: m.id, name: `${m.nombre} ${m.apellido}` })),
-        ...visitors.map((v) => ({ tipo: 'visitor', id: v.id, name: v.nombre })),
+        ...friends.map((v) => ({ tipo: 'friend', id: v.id, name: v.nombre })),
       ];
 
       for (const person of allPeople) {
@@ -203,7 +203,7 @@ export default function Attendance() {
       <Tabs defaultValue="members" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="members" data-testid="tab-members">Miembros</TabsTrigger>
-          <TabsTrigger value="visitors" data-testid="tab-visitors">Visitantes</TabsTrigger>
+          <TabsTrigger value="friends" data-testid="tab-friends">Visitantes</TabsTrigger>
         </TabsList>
         <TabsContent value="members">
           <Card>
@@ -213,12 +213,12 @@ export default function Attendance() {
             <CardContent>{renderAttendanceList(filteredMembers, 'member')}</CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="visitors">
+        <TabsContent value="friends">
           <Card>
             <CardHeader>
-              <CardTitle>Visitantes ({filteredVisitors.length})</CardTitle>
+              <CardTitle>Visitantes ({filteredFriends.length})</CardTitle>
             </CardHeader>
-            <CardContent>{renderAttendanceList(filteredVisitors, 'visitor')}</CardContent>
+            <CardContent>{renderAttendanceList(filteredFriends, 'friend')}</CardContent>
           </Card>
         </TabsContent>
       </Tabs>
