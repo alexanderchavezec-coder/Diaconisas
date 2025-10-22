@@ -389,7 +389,7 @@ export default function Reports() {
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="Miembros" fill="#3b82f6" />
-                <Bar dataKey="Visitantes" fill="#a855f7" />
+                <Bar dataKey="Amigos" fill="#a855f7" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
