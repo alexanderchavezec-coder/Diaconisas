@@ -335,7 +335,7 @@ export default function Reports() {
 
           {visitors.length === 0 ? (
             <p className="text-center text-gray-600 py-8">
-              No hay visitantes registrados para esta fecha
+              No hay amigos registrados para esta fecha
             </p>
           ) : (
             <ol className="space-y-2" style={{listStyleType: 'decimal', paddingLeft: '0'}}>
