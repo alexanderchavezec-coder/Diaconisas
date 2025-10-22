@@ -401,9 +401,29 @@ async def get_report_by_date_range(
     for record in records:
         record_date = record.get('fecha', '')
         if start <= record_date <= end:
-            if tipo == "all" or record.get('tipo') == tipo:
+            record_tipo = record.get('tipo', '')
+            # Handle both 'visitor' and 'friend' as the same type
+            if tipo == "all":
                 filtered.append({
-                    'tipo': record.get('tipo', ''),
+                    'tipo': record_tipo,
+                    'person_id': record.get('person_id', ''),
+                    'person_name': record.get('person_name', ''),
+                    'fecha': record.get('fecha', ''),
+                    'presente': record.get('presente', 'FALSE').upper() == 'TRUE'
+                })
+            elif tipo == "visitor":
+                # Include both 'visitor' and 'friend' types when searching for visitors
+                if record_tipo in ['visitor', 'friend']:
+                    filtered.append({
+                        'tipo': record_tipo,
+                        'person_id': record.get('person_id', ''),
+                        'person_name': record.get('person_name', ''),
+                        'fecha': record.get('fecha', ''),
+                        'presente': record.get('presente', 'FALSE').upper() == 'TRUE'
+                    })
+            elif tipo == record_tipo:
+                filtered.append({
+                    'tipo': record_tipo,
                     'person_id': record.get('person_id', ''),
                     'person_name': record.get('person_name', ''),
                     'fecha': record.get('fecha', ''),
