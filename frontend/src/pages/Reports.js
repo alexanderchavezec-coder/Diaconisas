@@ -367,8 +367,21 @@ export default function Reports() {
   };
 
   const renderCollectiveReport = () => {
+    if (!reportData) return null;
 
     const { by_date } = reportData;
+    
+    // Safety check
+    if (!by_date || Object.keys(by_date).length === 0) {
+      return (
+        <Card>
+          <CardContent className="py-8">
+            <p className="text-center text-gray-500">No hay datos de asistencia para este rango de fechas</p>
+          </CardContent>
+        </Card>
+      );
+    }
+    
     const chartData = Object.entries(by_date).map(([date, data]) => ({
       fecha: date,
       Miembros: data.members,
