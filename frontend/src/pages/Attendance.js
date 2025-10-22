@@ -121,26 +121,45 @@ export default function Attendance() {
       ];
 
       // Only save people who have been explicitly marked (checked or unchecked)
-      const promises = [];
+      const peopleToSave = [];
       for (const person of allPeople) {
         const key = `${person.tipo}-${person.id}`;
         // Skip if this person wasn't explicitly checked or unchecked
         if (attendance.hasOwnProperty(key)) {
-          const presente = attendance[key];
-          promises.push(
-            axios.post(`${API}/attendance`, {
-              tipo: person.tipo,
-              person_id: person.id,
-              person_name: person.name,
-              fecha: selectedDate,
-              presente: presente,
-            })
-          );
+          peopleToSave.push({
+            tipo: person.tipo,
+            person_id: person.id,
+            person_name: person.name,
+            fecha: selectedDate,
+            presente: attendance[key],
+          });
         }
       }
 
-      await Promise.all(promises);
-      toast.success('Asistencia guardada exitosamente');
+      // Save sequentially with small delay to avoid rate limits
+      let successCount = 0;
+      for (const attendanceRecord of peopleToSave) {
+        try {
+          await axios.post(`${API}/attendance`, attendanceRecord);
+          successCount++;
+          // Small delay between requests to avoid rate limits
+          if (successCount < peopleToSave.length) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        } catch (err) {
+          console.error('Error saving attendance for:', attendanceRecord.person_name, err);
+          // Continue with other saves
+        }
+      }
+
+      if (successCount === peopleToSave.length) {
+        toast.success('Asistencia guardada exitosamente');
+      } else if (successCount > 0) {
+        toast.success(`${successCount} de ${peopleToSave.length} registros guardados`);
+      } else {
+        toast.error('Error al guardar asistencia');
+      }
+      
       // Refresh today's attendance list
       await fetchTodayAttendance();
     } catch (error) {
