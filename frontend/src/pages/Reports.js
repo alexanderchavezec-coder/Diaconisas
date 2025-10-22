@@ -265,7 +265,7 @@ export default function Reports() {
         <Card className="print:hidden">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-2xl">Reporte de Visitantes</CardTitle>
+              <CardTitle className="text-2xl">Reporte de Amigos</CardTitle>
               <p className="text-gray-600 mt-2">
                 {new Date(date).toLocaleDateString('es-ES', { 
                   weekday: 'long', 
