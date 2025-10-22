@@ -216,7 +216,7 @@ export default function Attendance() {
         <TabsContent value="friends">
           <Card>
             <CardHeader>
-              <CardTitle>Visitantes ({filteredFriends.length})</CardTitle>
+              <CardTitle>Amigos ({filteredFriends.length})</CardTitle>
             </CardHeader>
             <CardContent>{renderAttendanceList(filteredFriends, 'friend')}</CardContent>
           </Card>
