@@ -80,21 +80,30 @@ export default function Attendance() {
         ...friends.map((v) => ({ tipo: 'friend', id: v.id, name: v.nombre })),
       ];
 
+      // Only save people who have been explicitly marked (checked or unchecked)
+      const promises = [];
       for (const person of allPeople) {
         const key = `${person.tipo}-${person.id}`;
-        const presente = attendance[key] || false;
-        await axios.post(`${API}/attendance`, {
-          tipo: person.tipo,
-          person_id: person.id,
-          person_name: person.name,
-          fecha: selectedDate,
-          presente: presente,
-        });
+        // Skip if this person wasn't explicitly checked or unchecked
+        if (attendance.hasOwnProperty(key)) {
+          const presente = attendance[key];
+          promises.push(
+            axios.post(`${API}/attendance`, {
+              tipo: person.tipo,
+              person_id: person.id,
+              person_name: person.name,
+              fecha: selectedDate,
+              presente: presente,
+            })
+          );
+        }
       }
 
+      await Promise.all(promises);
       toast.success('Asistencia guardada exitosamente');
     } catch (error) {
       toast.error('Error al guardar asistencia');
+      console.error(error);
     } finally {
       setLoading(false);
     }
