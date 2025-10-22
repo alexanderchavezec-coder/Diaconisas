@@ -25,6 +25,18 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Timezone configuration
+EASTERN_TZ = pytz.timezone('America/New_York')
+
+# Helper function to get current Eastern Time
+def get_eastern_now():
+    """Get current datetime in Eastern timezone"""
+    return datetime.now(EASTERN_TZ)
+
+def get_eastern_today():
+    """Get today's date in Eastern timezone as YYYY-MM-DD string"""
+    return get_eastern_now().strftime('%Y-%m-%d')
+
 # Security
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
