@@ -287,7 +287,7 @@ export default function Reports() {
           <CardContent>
             {visitors.length === 0 ? (
               <p className="text-center text-gray-500 py-8">
-                No hay visitantes registrados para esta fecha
+                No hay amigos registrados para esta fecha
               </p>
             ) : (
               <div>
