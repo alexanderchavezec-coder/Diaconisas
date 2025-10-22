@@ -225,12 +225,7 @@ export default function Attendance() {
               <div>
                 <p className="text-sm text-gray-600 font-medium">Registrando asistencia para</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {new Date(selectedDate).toLocaleDateString('es-ES', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
+                  {displayDate}
                 </p>
               </div>
             </div>
