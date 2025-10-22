@@ -77,6 +77,19 @@ export default function Attendance() {
     }
   };
 
+  const fetchTodayAttendance = async () => {
+    try {
+      const response = await axios.get(`${API}/attendance/today`);
+      const attendanceSet = new Set();
+      response.data.forEach((record) => {
+        attendanceSet.add(`${record.tipo}-${record.person_id}`);
+      });
+      setTodayAttendance(attendanceSet);
+    } catch (error) {
+      console.error('Error al cargar asistencia de hoy:', error);
+    }
+  };
+
   const handleAttendanceChange = (tipo, personId, personName, checked) => {
     const key = `${tipo}-${personId}`;
     setAttendance({ ...attendance, [key]: checked });
