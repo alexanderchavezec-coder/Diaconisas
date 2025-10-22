@@ -236,49 +236,72 @@ async def delete_member(member_id: str, current_user: str = Depends(get_current_
     sheets_service.delete_row('Miembros', record['_row'])
     return {"message": "Member deleted successfully"}
 
-# Visitor endpoints
+# Visitor endpoints (Google Sheets - Amigos)
 @api_router.post("/visitors", response_model=Visitor)
 async def create_visitor(visitor_input: VisitorCreate, current_user: str = Depends(get_current_user)):
     visitor_obj = Visitor(**visitor_input.model_dump())
-    doc = visitor_obj.model_dump()
-    doc['fecha_registro'] = doc['fecha_registro'].isoformat()
-    await db.visitors.insert_one(doc)
+    values = [
+        visitor_obj.id,
+        visitor_obj.nombre,
+        visitor_obj.de_donde_viene,
+        visitor_obj.fecha_registro.isoformat()
+    ]
+    sheets_service.append_row('Amigos', values)
     return visitor_obj
 
 @api_router.get("/visitors", response_model=List[Visitor])
 async def get_visitors(current_user: str = Depends(get_current_user)):
-    visitors = await db.visitors.find({}, {"_id": 0}).to_list(1000)
-    for visitor in visitors:
-        if isinstance(visitor['fecha_registro'], str):
-            visitor['fecha_registro'] = datetime.fromisoformat(visitor['fecha_registro'])
+    records = sheets_service.read_all('Amigos')
+    visitors = []
+    for record in records:
+        if record.get('id'):
+            visitors.append(Visitor(
+                id=record['id'],
+                nombre=record.get('nombre', ''),
+                de_donde_viene=record.get('de_donde_viene', ''),
+                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+            ))
     return visitors
 
 @api_router.get("/visitors/{visitor_id}", response_model=Visitor)
 async def get_visitor(visitor_id: str, current_user: str = Depends(get_current_user)):
-    visitor = await db.visitors.find_one({"id": visitor_id}, {"_id": 0})
-    if not visitor:
+    record = sheets_service.find_row_by_id('Amigos', visitor_id)
+    if not record:
         raise HTTPException(status_code=404, detail="Visitor not found")
-    if isinstance(visitor['fecha_registro'], str):
-        visitor['fecha_registro'] = datetime.fromisoformat(visitor['fecha_registro'])
-    return visitor
+    return Visitor(
+        id=record['id'],
+        nombre=record.get('nombre', ''),
+        de_donde_viene=record.get('de_donde_viene', ''),
+        fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+    )
 
 @api_router.put("/visitors/{visitor_id}", response_model=Visitor)
 async def update_visitor(visitor_id: str, visitor_input: VisitorCreate, current_user: str = Depends(get_current_user)):
-    update_data = visitor_input.model_dump()
-    result = await db.visitors.update_one({"id": visitor_id}, {"$set": update_data})
-    if result.matched_count == 0:
+    record = sheets_service.find_row_by_id('Amigos', visitor_id)
+    if not record:
         raise HTTPException(status_code=404, detail="Visitor not found")
     
-    updated_visitor = await db.visitors.find_one({"id": visitor_id}, {"_id": 0})
-    if isinstance(updated_visitor['fecha_registro'], str):
-        updated_visitor['fecha_registro'] = datetime.fromisoformat(updated_visitor['fecha_registro'])
-    return updated_visitor
+    values = [
+        visitor_id,
+        visitor_input.nombre,
+        visitor_input.de_donde_viene,
+        record.get('fecha_registro', datetime.now(timezone.utc).isoformat())
+    ]
+    sheets_service.update_row('Amigos', record['_row'], values)
+    
+    return Visitor(
+        id=visitor_id,
+        nombre=visitor_input.nombre,
+        de_donde_viene=visitor_input.de_donde_viene,
+        fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+    )
 
 @api_router.delete("/visitors/{visitor_id}")
 async def delete_visitor(visitor_id: str, current_user: str = Depends(get_current_user)):
-    result = await db.visitors.delete_one({"id": visitor_id})
-    if result.deleted_count == 0:
+    record = sheets_service.find_row_by_id('Amigos', visitor_id)
+    if not record:
         raise HTTPException(status_code=404, detail="Visitor not found")
+    sheets_service.delete_row('Amigos', record['_row'])
     return {"message": "Visitor deleted successfully"}
 
 # Attendance endpoints
