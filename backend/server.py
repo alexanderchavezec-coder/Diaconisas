@@ -215,7 +215,7 @@ async def get_member(member_id: str, current_user: str = Depends(get_current_use
         apellido=record.get('apellido', ''),
         direccion=record.get('direccion', ''),
         telefono=str(record.get('telefono', '')),
-        fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+        fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat()))
     )
 
 @api_router.put("/members/{member_id}", response_model=Member)
