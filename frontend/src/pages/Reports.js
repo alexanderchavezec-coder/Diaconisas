@@ -415,7 +415,7 @@ export default function Reports() {
                     <tr key={date} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-4">{date}</td>
                       <td className="py-3 px-4">{data.members}</td>
-                      <td className="py-3 px-4">{data.visitors}</td>
+                      <td className="py-3 px-4">{data.friends}</td>
                       <td className="py-3 px-4 font-semibold">{data.total}</td>
                     </tr>
                   ))}
