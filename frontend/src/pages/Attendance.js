@@ -20,18 +20,33 @@ export default function Attendance() {
   // Get New York date correctly
   const getTodayInNY = () => {
     const now = new Date();
-    const nyDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-    return `${nyDate.getFullYear()}-${String(nyDate.getMonth() + 1).padStart(2, '0')}-${String(nyDate.getDate()).padStart(2, '0')}`;
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    const parts = formatter.formatToParts(now);
+    const year = parts.find(p => p.type === 'year').value;
+    const month = parts.find(p => p.type === 'month').value;
+    const day = parts.find(p => p.type === 'day').value;
+    return `${year}-${month}-${day}`;
+  };
+  
+  const getDisplayDate = () => {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('es-ES', {
+      timeZone: 'America/New_York',
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    return formatter.format(now);
   };
   
   const [selectedDate] = useState(getTodayInNY());
-  const [displayDate, setDisplayDate] = useState(new Date().toLocaleString('es-ES', { 
-    timeZone: 'America/New_York',
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  }));
+  const [displayDate] = useState(getDisplayDate());
   
   const [attendance, setAttendance] = useState({});
   const [todayAttendance, setTodayAttendance] = useState(new Set());
