@@ -11,15 +11,16 @@ import { FileText, TrendingUp, Printer, Calendar as CalendarIcon } from 'lucide-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function Reports() {
-  // Get local date instead of UTC
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  // Get Eastern Time date
+  const now = new Date();
+  const nyDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const year = nyDate.getFullYear();
+  const month = String(nyDate.getMonth() + 1).padStart(2, '0');
+  const day = String(nyDate.getDate()).padStart(2, '0');
   const todayDate = `${year}-${month}-${day}`;
   
   const firstDay = `${year}-${month}-01`;
-  const lastDayOfMonth = new Date(year, today.getMonth() + 1, 0).getDate();
+  const lastDayOfMonth = new Date(year, nyDate.getMonth() + 1, 0).getDate();
   const lastDay = `${year}-${month}-${String(lastDayOfMonth).padStart(2, '0')}`;
   
   const [reportType, setReportType] = useState('date-range');
