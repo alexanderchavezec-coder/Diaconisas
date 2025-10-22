@@ -142,7 +142,7 @@ export default function Attendance() {
     <div className="space-y-6" data-testid="attendance-page">
       <div>
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Registro de Asistencia</h1>
-        <p className="text-gray-600 text-lg">Marca la asistencia de miembros y visitantes</p>
+        <p className="text-gray-600 text-lg">Marca la asistencia de miembros y amigos</p>
       </div>
 
       <Card>
