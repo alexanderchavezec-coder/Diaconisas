@@ -403,11 +403,12 @@ async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
     total_members = len([m for m in members if m.get('id')])
     total_visitors = len([v for v in visitors if v.get('id')])
     
-    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    today = get_eastern_today()
     today_attendance = sum(1 for a in attendance if a.get('fecha')==today and a.get('presente','FALSE').upper()=='TRUE')
     
-    first_day = datetime.now(timezone.utc).replace(day=1).strftime('%Y-%m-%d')
-    last_day = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    eastern_now = get_eastern_now()
+    first_day = eastern_now.replace(day=1).strftime('%Y-%m-%d')
+    last_day = eastern_now.strftime('%Y-%m-%d')
     month_attendance = sum(1 for a in attendance if first_day <= a.get('fecha','') <= last_day and a.get('presente','FALSE').upper()=='TRUE')
     
     return {"total_members": total_members, "total_visitors": total_visitors, "today_attendance": today_attendance, "month_attendance": month_attendance}
