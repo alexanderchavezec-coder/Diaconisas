@@ -124,6 +124,8 @@ export default function Attendance() {
 
       await Promise.all(promises);
       toast.success('Asistencia guardada exitosamente');
+      // Refresh today's attendance list
+      await fetchTodayAttendance();
     } catch (error) {
       toast.error('Error al guardar asistencia');
       console.error(error);
