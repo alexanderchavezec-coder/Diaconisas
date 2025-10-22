@@ -43,7 +43,7 @@ export default function Attendance() {
     try {
       const [membersRes, friendsRes] = await Promise.all([
         axios.get(`${API}/members`),
-        axios.get(`${API}/friends`),
+        axios.get(`${API}/visitors`),
       ]);
       setMembers(membersRes.data);
       setFriends(friendsRes.data);
