@@ -63,31 +63,31 @@ export default function Reports() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${API}/reports/by-date-range?start=${visitorsDate}&end=${visitorsDate}&tipo=visitor`
+        `${API}/reports/by-date-range?start=${visitorsDate}&end=${visitorsDate}&tipo=friend`
       );
       
-      const presentVisitors = response.data.records.filter(r => r.presente);
+      const presentFriends = response.data.records.filter(r => r.presente);
       
-      // Get full visitor details
-      const visitorsRes = await axios.get(`${API}/visitors`);
-      const allVisitors = visitorsRes.data;
+      // Get full friend details
+      const friendsRes = await axios.get(`${API}/friends`);
+      const allFriends = friendsRes.data;
       
-      // Match and enrich visitor data
-      const enrichedVisitors = presentVisitors.map(record => {
-        const visitorDetail = allVisitors.find(v => v.id === record.person_id);
+      // Match and enrich friend data
+      const enrichedFriends = presentFriends.map(record => {
+        const friendDetail = allFriends.find(v => v.id === record.person_id);
         return {
           name: record.person_name,
-          origin: visitorDetail?.de_donde_viene || 'No especificado',
+          origin: friendDetail?.de_donde_viene || 'No especificado',
           date: record.fecha
         };
       });
       
       setVisitorsData({
         date: visitorsDate,
-        visitors: enrichedVisitors
+        visitors: enrichedFriends
       });
       setReportData(null);
-      toast.success('Reporte de visitantes generado');
+      toast.success('Reporte de amigos generado');
     } catch (error) {
       toast.error('Error al generar reporte');
     } finally {
