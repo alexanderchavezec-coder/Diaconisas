@@ -9,7 +9,7 @@ export default function Layout({ onLogout }) {
   const menuItems = [
     { path: '/', icon: Home, label: 'Dashboard', testId: 'nav-dashboard' },
     { path: '/members', icon: Users, label: 'Miembros', testId: 'nav-members' },
-    { path: '/friends', icon: UserPlus, label: 'Amigos', testId: 'nav-friends' },
+    { path: '/visitors', icon: UserPlus, label: 'Amigos', testId: 'nav-visitors' },
     { path: '/attendance', icon: Calendar, label: 'Asistencia', testId: 'nav-attendance' },
     { path: '/reports', icon: FileText, label: 'Reportes', testId: 'nav-reports' },
   ];
