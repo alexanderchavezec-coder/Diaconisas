@@ -497,9 +497,11 @@ async def get_collective_report(
                 dates[record_date] = {'members': 0, 'visitors': 0, 'total': 0}
             if record.get('presente', 'FALSE').upper() == 'TRUE':
                 dates[record_date]['total'] += 1
-                if record.get('tipo') == 'member':
+                record_tipo = record.get('tipo', '')
+                if record_tipo == 'member':
                     dates[record_date]['members'] += 1
-                else:
+                elif record_tipo in ['visitor', 'friend']:
+                    # Count both visitor and friend as visitors
                     dates[record_date]['visitors'] += 1
     
     total_records = sum(1 for r in records if start <= r.get('fecha', '') <= end)
