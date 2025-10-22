@@ -121,7 +121,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         return username
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.JWTError:
+    except (InvalidTokenError, Exception):
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 # Auth endpoints (still using MongoDB for users)
