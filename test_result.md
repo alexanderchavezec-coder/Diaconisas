@@ -101,3 +101,88 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Fix timezone issue - dates not updating correctly (showing October 21st instead of 22nd)
+  Add visual indicator (green button) in Attendance page to show who has attendance marked today
+
+backend:
+  - task: "Timezone configuration - Eastern Time (America/New_York)"
+    implemented: true
+    working: "needs_user_testing"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_user_testing"
+        agent: "main"
+        comment: |
+          Implemented Eastern Time timezone:
+          - Added pytz import
+          - Created helper functions: get_eastern_now() and get_eastern_today()
+          - Updated all datetime.now(timezone.utc) to use get_eastern_now()
+          - Updated all models (User, Member, Visitor, Attendance) to use Eastern Time
+          - Updated dashboard/stats endpoint to use Eastern Time for today and month calculations
+          - All date operations now use America/New_York timezone
+
+  - task: "New endpoint: GET /attendance/today"
+    implemented: true
+    working: "needs_user_testing"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_user_testing"
+        agent: "main"
+        comment: |
+          Created new endpoint to return list of people with attendance marked today.
+          Returns array of objects with person_id, tipo, and presente status.
+          Used by frontend to show green indicator.
+
+frontend:
+  - task: "Visual indicator for attendance marked today"
+    implemented: true
+    working: "needs_user_testing"
+    file: "frontend/src/pages/Attendance.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_user_testing"
+        agent: "main"
+        comment: |
+          Added green button indicator in Attendance page:
+          - Added state for todayAttendance (Set of person IDs)
+          - Created fetchTodayAttendance() function to call /attendance/today endpoint
+          - Updated renderAttendanceList to show green button with checkmark
+          - Button appears on right side of name if person has attendance today
+          - Button is visual only (no onClick action)
+          - Refreshes after saving attendance
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Timezone configuration - verify dates display correctly"
+    - "Visual indicator - verify green button appears for people with attendance"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Implementation complete:
+      1. Fixed timezone to use Eastern Time (America/New_York) throughout the application
+      2. Added green button indicator in Attendance page for people who already marked attendance today
+      
+      User needs to test manually:
+      - Check if dates now show correctly (should be October 22nd)
+      - Check if green buttons appear next to names in Attendance page for people with attendance today
+      - Verify Dashboard stats use correct date
