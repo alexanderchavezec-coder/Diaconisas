@@ -302,26 +302,51 @@ async def create_attendance(attendance_input: AttendanceCreate, current_user: st
             cached_data = sheets_service.read_all('Asistencia')
             sheets_cache.set('Asistencia', cached_data)
         
-        records = cached_data
+        records = list(cached_data)  # Make a copy
         
         existing_row = None
-        for idx, record in enumerate(records, start=2):
+        existing_record_idx = None
+        for idx, record in enumerate(records):
             if str(record.get('person_id', '')) == str(attendance_input.person_id) and record.get('fecha') == attendance_input.fecha:
-                existing_row = idx
+                existing_row = idx + 2  # Sheet row number
+                existing_record_idx = idx
                 break
         
         if existing_row:
-            values = [attendance_input.tipo, attendance_input.person_id, attendance_input.person_name, attendance_input.fecha, 'TRUE' if attendance_input.presente else 'FALSE', records[existing_row-2].get('id', str(uuid.uuid4())), get_eastern_now().isoformat()]
+            record_id = records[existing_record_idx].get('id', str(uuid.uuid4()))
+            values = [attendance_input.tipo, attendance_input.person_id, attendance_input.person_name, attendance_input.fecha, 'TRUE' if attendance_input.presente else 'FALSE', record_id, get_eastern_now().isoformat()]
             sheets_service.update_row('Asistencia', existing_row, values)
-            # Invalidate cache after successful write
-            sheets_cache.invalidate('Asistencia')
-            return Attendance(id=records[existing_row-2].get('id', str(uuid.uuid4())), tipo=attendance_input.tipo, person_id=attendance_input.person_id, person_name=attendance_input.person_name, fecha=attendance_input.fecha, presente=attendance_input.presente, created_at=get_eastern_now())
+            
+            # Update cache in-memory instead of invalidating
+            records[existing_record_idx] = {
+                'tipo': attendance_input.tipo,
+                'person_id': attendance_input.person_id,
+                'person_name': attendance_input.person_name,
+                'fecha': attendance_input.fecha,
+                'presente': 'TRUE' if attendance_input.presente else 'FALSE',
+                'id': record_id,
+                'created_at': get_eastern_now().isoformat()
+            }
+            sheets_cache.set('Asistencia', records)
+            
+            return Attendance(id=record_id, tipo=attendance_input.tipo, person_id=attendance_input.person_id, person_name=attendance_input.person_name, fecha=attendance_input.fecha, presente=attendance_input.presente, created_at=get_eastern_now())
         
         attendance_obj = Attendance(**attendance_input.model_dump())
         values = [attendance_obj.tipo, attendance_obj.person_id, attendance_obj.person_name, attendance_obj.fecha, 'TRUE' if attendance_obj.presente else 'FALSE', attendance_obj.id, attendance_obj.created_at.isoformat()]
         sheets_service.append_row('Asistencia', values)
-        # Invalidate cache after successful write
-        sheets_cache.invalidate('Asistencia')
+        
+        # Add to cache instead of invalidating
+        records.append({
+            'tipo': attendance_obj.tipo,
+            'person_id': attendance_obj.person_id,
+            'person_name': attendance_obj.person_name,
+            'fecha': attendance_obj.fecha,
+            'presente': 'TRUE' if attendance_obj.presente else 'FALSE',
+            'id': attendance_obj.id,
+            'created_at': attendance_obj.created_at.isoformat()
+        })
+        sheets_cache.set('Asistencia', records)
+        
         return attendance_obj
     except Exception as e:
         logger.error(f"Error saving attendance: {str(e)}")
