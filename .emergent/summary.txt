@@ -1,0 +1,108 @@
+<analysis>
+The AI engineer was tasked with developing a church attendance application, starting from an initial problem statement in Spanish. The development followed an iterative process, with the AI clarifying requirements, implementing features, and debugging based on user feedback and reported issues. Key architectural decisions involved initially using FastAPI/React/MongoDB, then pivoting to Google Sheets for data persistence due to MongoDB's ephemeral nature in the environment, leading to significant refactoring. Throughout the process, the AI focused on UI/UX design guidelines, robust error handling, and component reuse. Challenges included persistent data loss with MongoDB, Google Sheets API rate limits (addressed with caching), and complex frontend state management for attendance and reports. The final state reflects an application where core functionalities are linked to Google Sheets with caching, and the immediate task is to standardize date/time handling across the application to a specific timezone.
+</analysis>
+
+<product_requirements>
+The user requested a church attendance application with the following core functionalities:
+1.  **Member Management**: Ability to input new members with details like Nombre, Apellido, Dirección, Teléfono.
+2.  **Visitor Tracking**: Ability to input visitors with details like Nombre, De donde viene (origin). (Later renamed to Amigos throughout the app).
+3.  **Attendance System**:
+    *   Register attendance for members and visitors (later Amigos).
+    *   Method: Mark present/absent for each service, individual or collective registration.
+    *   Attendance date should be current and non-editable.
+    *   Include a search bar to easily find members/amigos for attendance.
+4.  **Reports and Statistics**:
+    *   Generate reports based on date range.
+    *   Individual and collective attendance reports for members and visitors/amigos.
+    *   Display present/absent lists.
+    *   Include an option to print visitor/amigo reports, showing name and origin on the same line, numbered, simple, and legible.
+    *   Pre-load report dates with the current month's range.
+5.  **Authentication**: User and password-based authentication (JWT).
+6.  **Branding/UI**:
+    *   Integrate a specific logo ().
+    *   Change the app title from Control de Asistencia to IASD Danbury next to the logo.
+    *   Ensure compatibility with iPad and web (touch-friendly, responsive design).
+7.  **Data Persistence**: Initially MongoDB, but due to data loss issues, the user requested switching to Google Sheets for all data (members, friends, attendance) with real-time sync, using an API Key.
+8.  **Date/Time Handling**: Ensure all dates in the app automatically update and reflect the correct local date/time (specifically New York - USA timezone).
+</product_requirements>
+
+<key_technical_concepts>
+-   **FastAPI**: Python backend framework for building REST APIs.
+-   **React**: JavaScript library for building user interfaces.
+-   **MongoDB**: NoSQL database (initially used for persistence, then for authentication only).
+-   **Google Sheets API**: External service for data persistence (members, friends, attendance).
+-   **JWT (JSON Web Tokens)**: Used for user authentication.
+-   **Pydantic**: Data validation and parsing library used with FastAPI.
+-   **Shadcn UI**: React component library for building modern UI.
+-   **Caching**: Implemented to mitigate Google Sheets API rate limits.
+-   **Timezone Handling**: Crucial for accurate date display across the application.
+</key_technical_concepts>
+
+<code_architecture>
+The application follows a full-stack architecture with a React frontend and a FastAPI backend. Data persistence has evolved from MongoDB to a hybrid approach using MongoDB for authentication and Google Sheets with caching for core application data.
+
+
+
+**Key Files and Changes:**
+
+*   :
+    *   **Importance**: The central FastAPI application, defining all API endpoints and connecting to data sources.
+    *   **Changes**: Initially used MongoDB for all data. Modified to use MongoDB for user authentication () and Google Sheets (via  and ) for managing members, friends, and attendance records, and generating reports. Includes JWT handling for authentication, Pydantic models for data validation, and error handling for Google Sheets API limits. Endpoints now handle  type alongside  for backward compatibility.
+*   :
+    *   **Importance**: Abstracts interaction with Google Sheets API.
+    *   **Changes**: Created to handle reading and writing data to specific sheets (Members, Amigos, Asistencia) using  and service account credentials. Includes logic to find and update records.
+*   :
+    *   **Importance**: Provides a caching layer for Google Sheets API calls to reduce requests and avoid rate limits.
+    *   **Changes**: New file implementing a simple time-based cache for  calls.
+*   :
+    *   **Importance**: Defines the main application structure and routing.
+    *   **Changes**: Updated to include routes for  page and handle API endpoints consistently.
+*   :
+    *   **Importance**: Manages the application's overall layout, including the sidebar and header.
+    *   **Changes**: Modified to display the IASD Danbury text next to the logo and correctly link to the  section.
+*   :
+    *   **Importance**: Handles user authentication.
+    *   **Changes**: Updated to display IASD Danbury - Control de Asistencia as a subtitle and include the adventist logo.
+*   :
+    *   **Importance**: Provides UI for member creation, viewing, and deletion.
+    *   **Changes**: Error toast messages fixed. Endpoints updated to interact with Google Sheets via the backend.
+*    (initially ):
+    *   **Importance**: Provides UI for friend (visitor) creation, viewing, and deletion.
+    *   **Changes**: Renamed from  to . All UI text and API calls adjusted to use Amigos instead of Visitantes. Endpoints updated to interact with Google Sheets via the backend.
+*   :
+    *   **Importance**: Handles recording attendance for members and friends.
+    *   **Changes**: Date input set to non-editable and auto-populates with the current date. A search bar was added for filtering members/friends. UI text updated to Amigos. Logic for saving attendance records updated to correctly handle checkbox states and interact with Google Sheets via the backend.
+*   :
+    *   **Importance**: Generates and displays various reports, including present/absent lists and statistics.
+    *   **Changes**: Dates pre-loaded with the current month. Added options to display lists of attendees and absentees. Implemented Amigos del Día report with a date selector and print functionality. All UI text updated to Amigos. Date handling fixed to use local time. Safety checks added to prevent runtime errors with null data. Endpoints updated to interact with Google Sheets via the backend.
+*    / :
+    *   **Importance**: Global and component-specific styling.
+    *   **Changes**: Added print styles for reports, touch-friendly styles, and font smoothing for iPad compatibility.
+</code_architecture>
+
+<pending_tasks>
+-   Configure the application to use the New York (Eastern Time) timezone for all date/time displays and operations.
+-   Thoroughly test the updated Google Sheets integration with caching, especially the attendance saving and reporting functionalities, to ensure all previous bugs are resolved and data is handled correctly.
+</pending_tasks>
+
+<current_work>
+Immediately before this summary request, the AI engineer was working on resolving a date synchronization issue across the application. The user reported that dates, despite being updated, were still showing as October 21st instead of October 22nd, indicating a timezone discrepancy. The AI engineer identified that the system was likely using UTC time and needed to be adjusted to the user's local time. The last explicit request from the user was to apply the New York - USA timezone.
+
+The current state of the product is that it's using a hybrid data persistence model:
+*   User authentication data is stored in **MongoDB**.
+*   Member, Friend (formerly Visitor), and Attendance data are stored in **Google Sheets**.
+*   A **caching mechanism** has been implemented for Google Sheets interactions on the backend to mitigate API rate limits.
+*   The frontend has been updated to reflect Amigos instead of Visitantes across all relevant pages (Dashboard, Members, Friends, Attendance, Reports).
+*   The Attendance page includes a search bar and non-editable current date.
+*   The Reports page pre-loads dates, displays present/absent lists, and has a printable Amigos del Día report.
+
+However, the date display inconsistency (off by a day) indicates that the timezone configuration for date objects is not globally consistent, leading to a mismatch between the desired local date and the displayed date.
+</current_work>
+
+<optional_next_step>
+Configure the application to use the New York (Eastern Time) timezone for all date and time operations.
+</optional_next_step>
+
+<direct_quotes>
+User: por favor aplica la hora de New York -USA
+</direct_quotes>
