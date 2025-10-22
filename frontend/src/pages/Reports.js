@@ -321,7 +321,7 @@ export default function Reports() {
         <div className="hidden print:block print-content">
           <div className="text-center mb-8 pb-4 border-b-2 border-gray-800">
             <h1 className="text-3xl font-bold mb-2" style={{fontFamily: 'Playfair Display, serif'}}>
-              Reporte de Visitantes
+              Reporte de Amigos
             </h1>
             <p className="text-lg text-gray-700">
               {new Date(date).toLocaleDateString('es-ES', { 
