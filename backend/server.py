@@ -322,7 +322,7 @@ async def get_attendance_by_date(fecha: str, current_user: str = Depends(get_cur
     records = cached_data if cached_data else sheets_service.read_all('Asistencia')
     if not cached_data:
         sheets_cache.set('Asistencia', records)
-    return [{'id': r.get('id',''), 'tipo': r.get('tipo',''), 'person_id': r.get('person_id',''), 'person_name': r.get('person_name',''), 'fecha': r.get('fecha',''), 'presente': r.get('presente','FALSE').upper()=='TRUE', 'created_at': r.get('created_at',datetime.now(timezone.utc).isoformat())} for r in records if r.get('fecha')==fecha]
+    return [{'id': r.get('id',''), 'tipo': r.get('tipo',''), 'person_id': r.get('person_id',''), 'person_name': r.get('person_name',''), 'fecha': r.get('fecha',''), 'presente': r.get('presente','FALSE').upper()=='TRUE', 'created_at': r.get('created_at',get_eastern_now().isoformat())} for r in records if r.get('fecha')==fecha]
 
 @api_router.get("/attendance/person/{person_id}")
 async def get_person_attendance(person_id: str, tipo: str, current_user: str = Depends(get_current_user)):
