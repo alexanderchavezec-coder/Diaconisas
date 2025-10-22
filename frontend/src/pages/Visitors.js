@@ -47,10 +47,10 @@ export default function Visitors() {
     e.preventDefault();
     try {
       if (editingFriend) {
-        await axios.put(`${API}/friends/${editingFriend.id}`, formData);
+        await axios.put(`${API}/visitors/${editingFriend.id}`, formData);
         toast.success('Amigo actualizado exitosamente');
       } else {
-        await axios.post(`${API}/friends`, formData);
+        await axios.post(`${API}/visitors`, formData);
         toast.success('Amigo registrado exitosamente');
       }
       fetchFriends();
