@@ -51,6 +51,7 @@ export default function Attendance() {
       setFilteredFriends(friendsRes.data);
     } catch (error) {
       toast.error('Error al cargar datos');
+      console.error(error);
     }
   };
 
@@ -63,7 +64,8 @@ export default function Attendance() {
       });
       setAttendance(attendanceMap);
     } catch (error) {
-      console.error('Error al cargar asistencia');
+      console.error('Error al cargar asistencia:', error);
+      // Don't show error toast, just log it
     }
   };
 
