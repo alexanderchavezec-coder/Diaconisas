@@ -304,47 +304,88 @@ async def delete_visitor(visitor_id: str, current_user: str = Depends(get_curren
     sheets_service.delete_row('Amigos', record['_row'])
     return {"message": "Visitor deleted successfully"}
 
-# Attendance endpoints
+# Attendance endpoints (Google Sheets)
 @api_router.post("/attendance", response_model=Attendance)
 async def create_attendance(attendance_input: AttendanceCreate, current_user: str = Depends(get_current_user)):
     # Check if attendance already exists
-    existing = await db.attendance.find_one({
-        "person_id": attendance_input.person_id,
-        "fecha": attendance_input.fecha
-    })
+    records = sheets_service.read_all('Asistencia')
+    existing_row = None
+    for idx, record in enumerate(records, start=2):
+        if (str(record.get('person_id', '')) == str(attendance_input.person_id) and 
+            record.get('fecha') == attendance_input.fecha):
+            existing_row = idx
+            break
     
-    if existing:
+    if existing_row:
         # Update existing
-        await db.attendance.update_one(
-            {"person_id": attendance_input.person_id, "fecha": attendance_input.fecha},
-            {"$set": {"presente": attendance_input.presente}}
+        values = [
+            attendance_input.tipo,
+            attendance_input.person_id,
+            attendance_input.person_name,
+            attendance_input.fecha,
+            'TRUE' if attendance_input.presente else 'FALSE',
+            records[existing_row - 2].get('id', str(uuid.uuid4())),
+            datetime.now(timezone.utc).isoformat()
+        ]
+        sheets_service.update_row('Asistencia', existing_row, values)
+        return Attendance(
+            id=records[existing_row - 2].get('id', str(uuid.uuid4())),
+            tipo=attendance_input.tipo,
+            person_id=attendance_input.person_id,
+            person_name=attendance_input.person_name,
+            fecha=attendance_input.fecha,
+            presente=attendance_input.presente,
+            created_at=datetime.now(timezone.utc)
         )
-        existing['presente'] = attendance_input.presente
-        if isinstance(existing.get('created_at'), str):
-            existing['created_at'] = datetime.fromisoformat(existing['created_at'])
-        return Attendance(**existing)
     
+    # Create new
     attendance_obj = Attendance(**attendance_input.model_dump())
-    doc = attendance_obj.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    await db.attendance.insert_one(doc)
+    values = [
+        attendance_obj.tipo,
+        attendance_obj.person_id,
+        attendance_obj.person_name,
+        attendance_obj.fecha,
+        'TRUE' if attendance_obj.presente else 'FALSE',
+        attendance_obj.id,
+        attendance_obj.created_at.isoformat()
+    ]
+    sheets_service.append_row('Asistencia', values)
     return attendance_obj
 
 @api_router.get("/attendance")
 async def get_attendance_by_date(fecha: str, current_user: str = Depends(get_current_user)):
-    attendance_records = await db.attendance.find({"fecha": fecha}, {"_id": 0}).to_list(1000)
-    for record in attendance_records:
-        if isinstance(record.get('created_at'), str):
-            record['created_at'] = datetime.fromisoformat(record['created_at'])
-    return attendance_records
+    records = sheets_service.read_all('Asistencia')
+    filtered = []
+    for record in records:
+        if record.get('fecha') == fecha:
+            filtered.append({
+                'id': record.get('id', ''),
+                'tipo': record.get('tipo', ''),
+                'person_id': record.get('person_id', ''),
+                'person_name': record.get('person_name', ''),
+                'fecha': record.get('fecha', ''),
+                'presente': record.get('presente', 'FALSE').upper() == 'TRUE',
+                'created_at': record.get('created_at', datetime.now(timezone.utc).isoformat())
+            })
+    return filtered
 
 @api_router.get("/attendance/person/{person_id}")
 async def get_person_attendance(person_id: str, tipo: str, current_user: str = Depends(get_current_user)):
-    records = await db.attendance.find({"person_id": person_id, "tipo": tipo}, {"_id": 0}).to_list(1000)
+    records = sheets_service.read_all('Asistencia')
+    filtered = []
     for record in records:
-        if isinstance(record.get('created_at'), str):
-            record['created_at'] = datetime.fromisoformat(record['created_at'])
-    return records
+        if (str(record.get('person_id', '')) == str(person_id) and 
+            record.get('tipo') == tipo):
+            filtered.append({
+                'id': record.get('id', ''),
+                'tipo': record.get('tipo', ''),
+                'person_id': record.get('person_id', ''),
+                'person_name': record.get('person_name', ''),
+                'fecha': record.get('fecha', ''),
+                'presente': record.get('presente', 'FALSE').upper() == 'TRUE',
+                'created_at': record.get('created_at', datetime.now(timezone.utc).isoformat())
+            })
+    return filtered
 
 # Reports endpoints
 @api_router.get("/reports/by-date-range")
