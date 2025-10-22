@@ -75,7 +75,7 @@ class Member(BaseModel):
     apellido: str
     direccion: str
     telefono: str
-    fecha_registro: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    fecha_registro: datetime = Field(default_factory=get_eastern_now)
 
 class MemberCreate(BaseModel):
     nombre: str
