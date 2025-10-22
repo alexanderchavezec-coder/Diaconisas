@@ -262,7 +262,7 @@ async def get_visitors(current_user: str = Depends(get_current_user)):
                 id=record['id'],
                 nombre=record.get('nombre', ''),
                 de_donde_viene=record.get('de_donde_viene', ''),
-                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat()))
             ))
     return visitors
 
