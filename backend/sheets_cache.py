@@ -31,5 +31,5 @@ class SheetsCache:
         """Clear all cache"""
         self.cache.clear()
 
-# Global cache instance
-sheets_cache = SheetsCache(cache_duration_seconds=30)
+# Global cache instance - increased to 5 minutes to avoid quota issues
+sheets_cache = SheetsCache(cache_duration_seconds=300)
