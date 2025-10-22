@@ -11,6 +11,7 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
+from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from sheets_service import sheets_service
 
