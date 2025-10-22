@@ -367,7 +367,7 @@ export default function Reports() {
     const chartData = Object.entries(by_date).map(([date, data]) => ({
       fecha: date,
       Miembros: data.members,
-      Visitantes: data.visitors,
+      Amigos: data.friends,
       Total: data.total,
     }));
 
