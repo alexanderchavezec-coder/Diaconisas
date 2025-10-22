@@ -295,26 +295,37 @@ async def delete_visitor(visitor_id: str, current_user: str = Depends(get_curren
 # Attendance endpoints (Google Sheets con caché)
 @api_router.post("/attendance", response_model=Attendance)
 async def create_attendance(attendance_input: AttendanceCreate, current_user: str = Depends(get_current_user)):
-    cached_data = sheets_cache.get('Asistencia')
-    records = cached_data if cached_data else sheets_service.read_all('Asistencia')
-    
-    existing_row = None
-    for idx, record in enumerate(records, start=2):
-        if str(record.get('person_id', '')) == str(attendance_input.person_id) and record.get('fecha') == attendance_input.fecha:
-            existing_row = idx
-            break
-    
-    if existing_row:
-        values = [attendance_input.tipo, attendance_input.person_id, attendance_input.person_name, attendance_input.fecha, 'TRUE' if attendance_input.presente else 'FALSE', records[existing_row-2].get('id', str(uuid.uuid4())), get_eastern_now().isoformat()]
-        sheets_service.update_row('Asistencia', existing_row, values)
+    try:
+        # Get cached data or read from sheets
+        cached_data = sheets_cache.get('Asistencia')
+        if not cached_data:
+            cached_data = sheets_service.read_all('Asistencia')
+            sheets_cache.set('Asistencia', cached_data)
+        
+        records = cached_data
+        
+        existing_row = None
+        for idx, record in enumerate(records, start=2):
+            if str(record.get('person_id', '')) == str(attendance_input.person_id) and record.get('fecha') == attendance_input.fecha:
+                existing_row = idx
+                break
+        
+        if existing_row:
+            values = [attendance_input.tipo, attendance_input.person_id, attendance_input.person_name, attendance_input.fecha, 'TRUE' if attendance_input.presente else 'FALSE', records[existing_row-2].get('id', str(uuid.uuid4())), get_eastern_now().isoformat()]
+            sheets_service.update_row('Asistencia', existing_row, values)
+            # Invalidate cache after successful write
+            sheets_cache.invalidate('Asistencia')
+            return Attendance(id=records[existing_row-2].get('id', str(uuid.uuid4())), tipo=attendance_input.tipo, person_id=attendance_input.person_id, person_name=attendance_input.person_name, fecha=attendance_input.fecha, presente=attendance_input.presente, created_at=get_eastern_now())
+        
+        attendance_obj = Attendance(**attendance_input.model_dump())
+        values = [attendance_obj.tipo, attendance_obj.person_id, attendance_obj.person_name, attendance_obj.fecha, 'TRUE' if attendance_obj.presente else 'FALSE', attendance_obj.id, attendance_obj.created_at.isoformat()]
+        sheets_service.append_row('Asistencia', values)
+        # Invalidate cache after successful write
         sheets_cache.invalidate('Asistencia')
-        return Attendance(id=records[existing_row-2].get('id', str(uuid.uuid4())), tipo=attendance_input.tipo, person_id=attendance_input.person_id, person_name=attendance_input.person_name, fecha=attendance_input.fecha, presente=attendance_input.presente, created_at=get_eastern_now())
-    
-    attendance_obj = Attendance(**attendance_input.model_dump())
-    values = [attendance_obj.tipo, attendance_obj.person_id, attendance_obj.person_name, attendance_obj.fecha, 'TRUE' if attendance_obj.presente else 'FALSE', attendance_obj.id, attendance_obj.created_at.isoformat()]
-    sheets_service.append_row('Asistencia', values)
-    sheets_cache.invalidate('Asistencia')
-    return attendance_obj
+        return attendance_obj
+    except Exception as e:
+        logger.error(f"Error saving attendance: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error al guardar asistencia: {str(e)}")
 
 @api_router.get("/attendance")
 async def get_attendance_by_date(fecha: str, current_user: str = Depends(get_current_user)):
