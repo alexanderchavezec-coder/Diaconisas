@@ -16,7 +16,12 @@ export default function Attendance() {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
+  
+  // Get local date
+  const today = new Date();
+  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const [selectedDate] = useState(localDate);
+  
   const [attendance, setAttendance] = useState({});
   const [loading, setLoading] = useState(false);
 
