@@ -387,7 +387,7 @@ async def get_person_attendance(person_id: str, tipo: str, current_user: str = D
             })
     return filtered
 
-# Reports endpoints
+# Reports endpoints (Google Sheets)
 @api_router.get("/reports/by-date-range")
 async def get_report_by_date_range(
     start: str, 
@@ -395,19 +395,27 @@ async def get_report_by_date_range(
     tipo: str = "all",
     current_user: str = Depends(get_current_user)
 ):
-    query = {"fecha": {"$gte": start, "$lte": end}}
-    if tipo != "all":
-        query["tipo"] = tipo
+    records = sheets_service.read_all('Asistencia')
+    filtered = []
     
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+    for record in records:
+        record_date = record.get('fecha', '')
+        if start <= record_date <= end:
+            if tipo == "all" or record.get('tipo') == tipo:
+                filtered.append({
+                    'tipo': record.get('tipo', ''),
+                    'person_id': record.get('person_id', ''),
+                    'person_name': record.get('person_name', ''),
+                    'fecha': record.get('fecha', ''),
+                    'presente': record.get('presente', 'FALSE').upper() == 'TRUE'
+                })
     
-    # Calculate statistics
-    total_records = len(records)
-    present_count = sum(1 for r in records if r['presente'])
+    total_records = len(filtered)
+    present_count = sum(1 for r in filtered if r['presente'])
     absent_count = total_records - present_count
     
     return {
-        "records": records,
+        "records": filtered,
         "statistics": {
             "total": total_records,
             "present": present_count,
@@ -424,20 +432,27 @@ async def get_individual_report(
     end: Optional[str] = None,
     current_user: str = Depends(get_current_user)
 ):
-    query = {"person_id": person_id, "tipo": tipo}
-    if start and end:
-        query["fecha"] = {"$gte": start, "$lte": end}
+    records = sheets_service.read_all('Asistencia')
+    filtered = []
     
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+    for record in records:
+        if (str(record.get('person_id', '')) == str(person_id) and 
+            record.get('tipo') == tipo):
+            record_date = record.get('fecha', '')
+            if (not start or not end) or (start <= record_date <= end):
+                filtered.append({
+                    'fecha': record.get('fecha', ''),
+                    'presente': record.get('presente', 'FALSE').upper() == 'TRUE'
+                })
     
-    total_records = len(records)
-    present_count = sum(1 for r in records if r['presente'])
+    total_records = len(filtered)
+    present_count = sum(1 for r in filtered if r['presente'])
     absent_count = total_records - present_count
     
     return {
         "person_id": person_id,
         "tipo": tipo,
-        "records": records,
+        "records": filtered,
         "statistics": {
             "total": total_records,
             "present": present_count,
@@ -452,52 +467,52 @@ async def get_collective_report(
     end: str,
     current_user: str = Depends(get_current_user)
 ):
-    query = {"fecha": {"$gte": start, "$lte": end}}
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
-    
-    # Group by date
+    records = sheets_service.read_all('Asistencia')
     dates = {}
+    
     for record in records:
-        fecha = record['fecha']
-        if fecha not in dates:
-            dates[fecha] = {'members': 0, 'visitors': 0, 'total': 0}
-        if record['presente']:
-            dates[fecha]['total'] += 1
-            if record['tipo'] == 'member':
-                dates[fecha]['members'] += 1
-            else:
-                dates[fecha]['visitors'] += 1
+        record_date = record.get('fecha', '')
+        if start <= record_date <= end:
+            if record_date not in dates:
+                dates[record_date] = {'members': 0, 'visitors': 0, 'total': 0}
+            if record.get('presente', 'FALSE').upper() == 'TRUE':
+                dates[record_date]['total'] += 1
+                if record.get('tipo') == 'member':
+                    dates[record_date]['members'] += 1
+                else:
+                    dates[record_date]['visitors'] += 1
+    
+    total_records = sum(1 for r in records if start <= r.get('fecha', '') <= end)
+    total_present = sum(dates[d]['total'] for d in dates)
     
     return {
         "date_range": {"start": start, "end": end},
         "by_date": dates,
-        "total_records": len(records),
-        "total_present": sum(1 for r in records if r['presente'])
+        "total_records": total_records,
+        "total_present": total_present
     }
 
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
-    # Get counts
-    total_members = await db.members.count_documents({})
-    total_visitors = await db.visitors.count_documents({})
+    members = sheets_service.read_all('Miembros')
+    visitors = sheets_service.read_all('Amigos')
+    attendance = sheets_service.read_all('Asistencia')
     
-    # Get today's attendance
+    total_members = len([m for m in members if m.get('id')])
+    total_visitors = len([f for f in visitors if f.get('id')])
+    
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-    today_attendance = await db.attendance.find({"fecha": today, "presente": True}, {"_id": 0}).to_list(1000)
+    today_attendance = sum(1 for a in attendance if a.get('fecha') == today and a.get('presente', 'FALSE').upper() == 'TRUE')
     
-    # Get this month's stats
     first_day = datetime.now(timezone.utc).replace(day=1).strftime('%Y-%m-%d')
     last_day = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-    month_attendance = await db.attendance.find({
-        "fecha": {"$gte": first_day, "$lte": last_day},
-        "presente": True
-    }, {"_id": 0}).to_list(10000)
+    month_attendance = sum(1 for a in attendance if first_day <= a.get('fecha', '') <= last_day and a.get('presente', 'FALSE').upper() == 'TRUE')
     
     return {
         "total_members": total_members,
         "total_visitors": total_visitors,
-        "today_attendance": len(today_attendance),
-        "month_attendance": len(month_attendance)
+        "today_attendance": today_attendance,
+        "month_attendance": month_attendance
     }
 
 # Include router
