@@ -200,7 +200,7 @@ async def get_members(current_user: str = Depends(get_current_user)):
                 apellido=record.get('apellido', ''),
                 direccion=record.get('direccion', ''),
                 telefono=str(record.get('telefono', '')),
-                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat()))
             ))
     return members
 
