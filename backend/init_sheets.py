@@ -32,7 +32,13 @@ def init_sheets():
         
         # Initialize Asistencia sheet
         try:
-            ws = sheets_service.get_worksheet('Asistencia')
+            try:
+                ws = sheets_service.get_worksheet('Asistencia')
+            except:
+                # Create the worksheet if it doesn't exist
+                ws = sheets_service.spreadsheet.add_worksheet(title='Asistencia', rows=1000, cols=10)
+                print("✅ Created Asistencia worksheet")
+            
             headers = ws.row_values(1)
             if not headers or headers[0] != 'tipo':
                 ws.clear()
