@@ -30,6 +30,7 @@ export default function Attendance() {
   useEffect(() => {
     fetchData();
     fetchAttendance();
+    fetchTodayAttendance();
   }, []);
 
   useEffect(() => {
