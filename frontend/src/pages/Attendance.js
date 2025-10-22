@@ -24,6 +24,7 @@ export default function Attendance() {
   const [selectedDate] = useState(localDate);
   
   const [attendance, setAttendance] = useState({});
+  const [todayAttendance, setTodayAttendance] = useState(new Set());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
