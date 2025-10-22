@@ -63,7 +63,7 @@ export default function Reports() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${API}/reports/by-date-range?start=${visitorsDate}&end=${visitorsDate}&tipo=friend`
+        `${API}/reports/by-date-range?start=${visitorsDate}&end=${visitorsDate}&tipo=visitor`
       );
       
       const presentFriends = response.data.records.filter(r => r.presente);
