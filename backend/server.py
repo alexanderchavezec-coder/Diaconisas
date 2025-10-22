@@ -330,7 +330,7 @@ async def get_person_attendance(person_id: str, tipo: str, current_user: str = D
     records = cached_data if cached_data else sheets_service.read_all('Asistencia')
     if not cached_data:
         sheets_cache.set('Asistencia', records)
-    return [{'id': r.get('id',''), 'tipo': r.get('tipo',''), 'person_id': r.get('person_id',''), 'person_name': r.get('person_name',''), 'fecha': r.get('fecha',''), 'presente': r.get('presente','FALSE').upper()=='TRUE', 'created_at': r.get('created_at',datetime.now(timezone.utc).isoformat())} for r in records if str(r.get('person_id',''))==str(person_id) and r.get('tipo')==tipo]
+    return [{'id': r.get('id',''), 'tipo': r.get('tipo',''), 'person_id': r.get('person_id',''), 'person_name': r.get('person_name',''), 'fecha': r.get('fecha',''), 'presente': r.get('presente','FALSE').upper()=='TRUE', 'created_at': r.get('created_at',get_eastern_now().isoformat())} for r in records if str(r.get('person_id',''))==str(person_id) and r.get('tipo')==tipo]
 
 # Reports endpoints (Google Sheets con caché)
 @api_router.get("/reports/by-date-range")
