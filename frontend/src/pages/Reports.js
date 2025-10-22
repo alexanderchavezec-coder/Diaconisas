@@ -406,7 +406,7 @@ export default function Reports() {
                   <tr className="border-b">
                     <th className="text-left py-3 px-4 font-semibold">Fecha</th>
                     <th className="text-left py-3 px-4 font-semibold">Miembros</th>
-                    <th className="text-left py-3 px-4 font-semibold">Visitantes</th>
+                    <th className="text-left py-3 px-4 font-semibold">Amigos</th>
                     <th className="text-left py-3 px-4 font-semibold">Total</th>
                   </tr>
                 </thead>
