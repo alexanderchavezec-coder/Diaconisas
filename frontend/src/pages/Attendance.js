@@ -203,7 +203,7 @@ export default function Attendance() {
       <Tabs defaultValue="members" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="members" data-testid="tab-members">Miembros</TabsTrigger>
-          <TabsTrigger value="friends" data-testid="tab-friends">Visitantes</TabsTrigger>
+          <TabsTrigger value="friends" data-testid="tab-friends">Amigos</TabsTrigger>
         </TabsList>
         <TabsContent value="members">
           <Card>
