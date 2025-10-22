@@ -158,49 +158,82 @@ async def login(user_input: UserLogin):
     access_token = create_access_token(data={"sub": user["username"]})
     return {"access_token": access_token, "token_type": "bearer"}
 
-# Member endpoints
+# Member endpoints (Google Sheets)
 @api_router.post("/members", response_model=Member)
 async def create_member(member_input: MemberCreate, current_user: str = Depends(get_current_user)):
     member_obj = Member(**member_input.model_dump())
-    doc = member_obj.model_dump()
-    doc['fecha_registro'] = doc['fecha_registro'].isoformat()
-    await db.members.insert_one(doc)
+    values = [
+        member_obj.id,
+        member_obj.nombre,
+        member_obj.apellido,
+        member_obj.direccion,
+        member_obj.telefono,
+        member_obj.fecha_registro.isoformat()
+    ]
+    sheets_service.append_row('Miembros', values)
     return member_obj
 
 @api_router.get("/members", response_model=List[Member])
 async def get_members(current_user: str = Depends(get_current_user)):
-    members = await db.members.find({}, {"_id": 0}).to_list(1000)
-    for member in members:
-        if isinstance(member['fecha_registro'], str):
-            member['fecha_registro'] = datetime.fromisoformat(member['fecha_registro'])
+    records = sheets_service.read_all('Miembros')
+    members = []
+    for record in records:
+        if record.get('id'):
+            members.append(Member(
+                id=record['id'],
+                nombre=record.get('nombre', ''),
+                apellido=record.get('apellido', ''),
+                direccion=record.get('direccion', ''),
+                telefono=record.get('telefono', ''),
+                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+            ))
     return members
 
 @api_router.get("/members/{member_id}", response_model=Member)
 async def get_member(member_id: str, current_user: str = Depends(get_current_user)):
-    member = await db.members.find_one({"id": member_id}, {"_id": 0})
-    if not member:
+    record = sheets_service.find_row_by_id('Miembros', member_id)
+    if not record:
         raise HTTPException(status_code=404, detail="Member not found")
-    if isinstance(member['fecha_registro'], str):
-        member['fecha_registro'] = datetime.fromisoformat(member['fecha_registro'])
-    return member
+    return Member(
+        id=record['id'],
+        nombre=record.get('nombre', ''),
+        apellido=record.get('apellido', ''),
+        direccion=record.get('direccion', ''),
+        telefono=record.get('telefono', ''),
+        fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+    )
 
 @api_router.put("/members/{member_id}", response_model=Member)
 async def update_member(member_id: str, member_input: MemberCreate, current_user: str = Depends(get_current_user)):
-    update_data = member_input.model_dump()
-    result = await db.members.update_one({"id": member_id}, {"$set": update_data})
-    if result.matched_count == 0:
+    record = sheets_service.find_row_by_id('Miembros', member_id)
+    if not record:
         raise HTTPException(status_code=404, detail="Member not found")
     
-    updated_member = await db.members.find_one({"id": member_id}, {"_id": 0})
-    if isinstance(updated_member['fecha_registro'], str):
-        updated_member['fecha_registro'] = datetime.fromisoformat(updated_member['fecha_registro'])
-    return updated_member
+    values = [
+        member_id,
+        member_input.nombre,
+        member_input.apellido,
+        member_input.direccion,
+        member_input.telefono,
+        record.get('fecha_registro', datetime.now(timezone.utc).isoformat())
+    ]
+    sheets_service.update_row('Miembros', record['_row'], values)
+    
+    return Member(
+        id=member_id,
+        nombre=member_input.nombre,
+        apellido=member_input.apellido,
+        direccion=member_input.direccion,
+        telefono=member_input.telefono,
+        fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat()))
+    )
 
 @api_router.delete("/members/{member_id}")
 async def delete_member(member_id: str, current_user: str = Depends(get_current_user)):
-    result = await db.members.delete_one({"id": member_id})
-    if result.deleted_count == 0:
+    record = sheets_service.find_row_by_id('Miembros', member_id)
+    if not record:
         raise HTTPException(status_code=404, detail="Member not found")
+    sheets_service.delete_row('Miembros', record['_row'])
     return {"message": "Member deleted successfully"}
 
 # Visitor endpoints
