@@ -293,7 +293,7 @@ export default function Reports() {
               <div>
                 <div className="mb-4 pb-4 border-b">
                   <p className="text-lg font-semibold">
-                    Total de Visitantes: <span className="text-purple-600">{visitors.length}</span>
+                    Total de Amigos: <span className="text-purple-600">{visitors.length}</span>
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
