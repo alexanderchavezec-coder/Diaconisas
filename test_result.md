@@ -178,11 +178,24 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
-      Implementation complete:
-      1. Fixed timezone to use Eastern Time (America/New_York) throughout the application
-      2. Added green button indicator in Attendance page for people who already marked attendance today
+      SECOND ITERATION - Fixed critical issues:
       
-      User needs to test manually:
-      - Check if dates now show correctly (should be October 22nd)
-      - Check if green buttons appear next to names in Attendance page for people with attendance today
-      - Verify Dashboard stats use correct date
+      FIXES APPLIED:
+      1. Attendance.js date display:
+         - Changed from new Date(selectedDate) which causes UTC offset
+         - Now uses direct toLocaleString with timeZone: 'America/New_York'
+         - Date now displays correctly in Spanish
+      
+      2. Green button matching logic:
+         - Fixed tipo mismatch between 'visitor' and 'friend'
+         - Added compatibility check for both tipos
+         - Console log added to verify data loading
+      
+      3. Reports.js date initialization:
+         - Updated to use Eastern Time for current date
+         - Month range now calculates correctly
+      
+      User needs to test:
+      - Date should now show "miércoles, 22 de octubre de 2025" (NOT 21)
+      - Green buttons should appear next to people with attendance marked today
+      - Open browser console to see "Today attendance loaded" message
