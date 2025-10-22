@@ -332,6 +332,26 @@ async def get_person_attendance(person_id: str, tipo: str, current_user: str = D
         sheets_cache.set('Asistencia', records)
     return [{'id': r.get('id',''), 'tipo': r.get('tipo',''), 'person_id': r.get('person_id',''), 'person_name': r.get('person_name',''), 'fecha': r.get('fecha',''), 'presente': r.get('presente','FALSE').upper()=='TRUE', 'created_at': r.get('created_at',get_eastern_now().isoformat())} for r in records if str(r.get('person_id',''))==str(person_id) and r.get('tipo')==tipo]
 
+@api_router.get("/attendance/today")
+async def get_today_attendance(current_user: str = Depends(get_current_user)):
+    """Get list of people who have attendance marked for today"""
+    today = get_eastern_today()
+    cached_data = sheets_cache.get('Asistencia')
+    records = cached_data if cached_data else sheets_service.read_all('Asistencia')
+    if not cached_data:
+        sheets_cache.set('Asistencia', records)
+    
+    # Return list of person_ids with attendance today (both present and absent)
+    today_people = []
+    for r in records:
+        if r.get('fecha') == today:
+            today_people.append({
+                'person_id': r.get('person_id', ''),
+                'tipo': r.get('tipo', ''),
+                'presente': r.get('presente', 'FALSE').upper() == 'TRUE'
+            })
+    return today_people
+
 # Reports endpoints (Google Sheets con caché)
 @api_router.get("/reports/by-date-range")
 async def get_report_by_date_range(start: str, end: str, tipo: str = "all", current_user: str = Depends(get_current_user)):
