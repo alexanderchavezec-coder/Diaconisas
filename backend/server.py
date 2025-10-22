@@ -88,7 +88,7 @@ class Visitor(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     nombre: str
     de_donde_viene: str
-    fecha_registro: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    fecha_registro: datetime = Field(default_factory=get_eastern_now)
 
 class VisitorCreate(BaseModel):
     nombre: str
