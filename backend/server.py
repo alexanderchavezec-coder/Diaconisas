@@ -102,7 +102,7 @@ class Attendance(BaseModel):
     person_name: str
     fecha: str  # YYYY-MM-DD format
     presente: bool
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=get_eastern_now)
 
 class AttendanceCreate(BaseModel):
     tipo: str
