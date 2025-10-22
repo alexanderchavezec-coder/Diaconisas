@@ -468,7 +468,7 @@ export default function Reports() {
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
                     <SelectItem value="member">Solo Miembros</SelectItem>
-                    <SelectItem value="visitor">Solo Visitantes</SelectItem>
+                    <SelectItem value="visitor">Solo Amigos</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
