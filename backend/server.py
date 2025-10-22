@@ -319,118 +319,85 @@ async def get_person_attendance(person_id: str, tipo: str, current_user: str = D
         sheets_cache.set('Asistencia', records)
     return [{'id': r.get('id',''), 'tipo': r.get('tipo',''), 'person_id': r.get('person_id',''), 'person_name': r.get('person_name',''), 'fecha': r.get('fecha',''), 'presente': r.get('presente','FALSE').upper()=='TRUE', 'created_at': r.get('created_at',datetime.now(timezone.utc).isoformat())} for r in records if str(r.get('person_id',''))==str(person_id) and r.get('tipo')==tipo]
 
-# Reports endpoints
+# Reports endpoints (Google Sheets con caché)
 @api_router.get("/reports/by-date-range")
-async def get_report_by_date_range(
-    start: str, 
-    end: str, 
-    tipo: str = "all",
-    current_user: str = Depends(get_current_user)
-):
-    query = {"fecha": {"$gte": start, "$lte": end}}
-    if tipo != "all":
-        query["tipo"] = tipo
+async def get_report_by_date_range(start: str, end: str, tipo: str = "all", current_user: str = Depends(get_current_user)):
+    cached_data = sheets_cache.get('Asistencia')
+    records = cached_data if cached_data else sheets_service.read_all('Asistencia')
+    if not cached_data:
+        sheets_cache.set('Asistencia', records)
     
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+    filtered = []
+    for r in records:
+        if start <= r.get('fecha','') <= end:
+            rt = r.get('tipo','')
+            if tipo=="all" or (tipo=="visitor" and rt in ['visitor','friend']) or tipo==rt:
+                filtered.append({'tipo':rt, 'person_id':r.get('person_id',''), 'person_name':r.get('person_name',''), 'fecha':r.get('fecha',''), 'presente':r.get('presente','FALSE').upper()=='TRUE'})
     
-    # Calculate statistics
-    total_records = len(records)
-    present_count = sum(1 for r in records if r['presente'])
-    absent_count = total_records - present_count
-    
-    return {
-        "records": records,
-        "statistics": {
-            "total": total_records,
-            "present": present_count,
-            "absent": absent_count,
-            "attendance_rate": round((present_count / total_records * 100) if total_records > 0 else 0, 2)
-        }
-    }
+    total_records = len(filtered)
+    present_count = sum(1 for r in filtered if r['presente'])
+    return {"records": filtered, "statistics": {"total": total_records, "present": present_count, "absent": total_records-present_count, "attendance_rate": round((present_count/total_records*100) if total_records>0 else 0, 2)}}
 
 @api_router.get("/reports/individual/{person_id}")
-async def get_individual_report(
-    person_id: str,
-    tipo: str,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
-    current_user: str = Depends(get_current_user)
-):
-    query = {"person_id": person_id, "tipo": tipo}
-    if start and end:
-        query["fecha"] = {"$gte": start, "$lte": end}
+async def get_individual_report(person_id: str, tipo: str, start: Optional[str] = None, end: Optional[str] = None, current_user: str = Depends(get_current_user)):
+    cached_data = sheets_cache.get('Asistencia')
+    records = cached_data if cached_data else sheets_service.read_all('Asistencia')
+    if not cached_data:
+        sheets_cache.set('Asistencia', records)
     
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+    filtered = []
+    for r in records:
+        if str(r.get('person_id',''))==str(person_id) and r.get('tipo')==tipo:
+            rd = r.get('fecha','')
+            if (not start or not end) or (start <= rd <= end):
+                filtered.append({'fecha':rd, 'presente':r.get('presente','FALSE').upper()=='TRUE'})
     
-    total_records = len(records)
-    present_count = sum(1 for r in records if r['presente'])
-    absent_count = total_records - present_count
-    
-    return {
-        "person_id": person_id,
-        "tipo": tipo,
-        "records": records,
-        "statistics": {
-            "total": total_records,
-            "present": present_count,
-            "absent": absent_count,
-            "attendance_rate": round((present_count / total_records * 100) if total_records > 0 else 0, 2)
-        }
-    }
+    total_records = len(filtered)
+    present_count = sum(1 for r in filtered if r['presente'])
+    return {"person_id": person_id, "tipo": tipo, "records": filtered, "statistics": {"total": total_records, "present": present_count, "absent": total_records-present_count, "attendance_rate": round((present_count/total_records*100) if total_records>0 else 0, 2)}}
 
 @api_router.get("/reports/collective")
-async def get_collective_report(
-    start: str,
-    end: str,
-    current_user: str = Depends(get_current_user)
-):
-    query = {"fecha": {"$gte": start, "$lte": end}}
-    records = await db.attendance.find(query, {"_id": 0}).to_list(10000)
+async def get_collective_report(start: str, end: str, current_user: str = Depends(get_current_user)):
+    cached_data = sheets_cache.get('Asistencia')
+    records = cached_data if cached_data else sheets_service.read_all('Asistencia')
+    if not cached_data:
+        sheets_cache.set('Asistencia', records)
     
-    # Group by date
     dates = {}
-    for record in records:
-        fecha = record['fecha']
-        if fecha not in dates:
-            dates[fecha] = {'members': 0, 'visitors': 0, 'total': 0}
-        if record['presente']:
-            dates[fecha]['total'] += 1
-            if record['tipo'] == 'member':
-                dates[fecha]['members'] += 1
-            else:
-                dates[fecha]['visitors'] += 1
+    for r in records:
+        rd = r.get('fecha','')
+        if start <= rd <= end:
+            if rd not in dates:
+                dates[rd] = {'members':0, 'visitors':0, 'total':0}
+            if r.get('presente','FALSE').upper()=='TRUE':
+                dates[rd]['total'] += 1
+                rt = r.get('tipo','')
+                if rt=='member':
+                    dates[rd]['members'] += 1
+                elif rt in ['visitor','friend']:
+                    dates[rd]['visitors'] += 1
     
-    return {
-        "date_range": {"start": start, "end": end},
-        "by_date": dates,
-        "total_records": len(records),
-        "total_present": sum(1 for r in records if r['presente'])
-    }
+    total_records = sum(1 for r in records if start <= r.get('fecha','') <= end)
+    total_present = sum(dates[d]['total'] for d in dates)
+    return {"date_range": {"start": start, "end": end}, "by_date": dates, "total_records": total_records, "total_present": total_present}
 
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
-    # Get counts
-    total_members = await db.members.count_documents({})
-    total_visitors = await db.visitors.count_documents({})
+    members = sheets_cache.get('Miembros') or sheets_service.read_all('Miembros')
+    visitors = sheets_cache.get('Amigos') or sheets_service.read_all('Amigos')
+    attendance = sheets_cache.get('Asistencia') or sheets_service.read_all('Asistencia')
     
-    # Get today's attendance
+    total_members = len([m for m in members if m.get('id')])
+    total_visitors = len([v for v in visitors if v.get('id')])
+    
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-    today_attendance = await db.attendance.find({"fecha": today, "presente": True}, {"_id": 0}).to_list(1000)
+    today_attendance = sum(1 for a in attendance if a.get('fecha')==today and a.get('presente','FALSE').upper()=='TRUE')
     
-    # Get this month's stats
     first_day = datetime.now(timezone.utc).replace(day=1).strftime('%Y-%m-%d')
     last_day = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-    month_attendance = await db.attendance.find({
-        "fecha": {"$gte": first_day, "$lte": last_day},
-        "presente": True
-    }, {"_id": 0}).to_list(10000)
+    month_attendance = sum(1 for a in attendance if first_day <= a.get('fecha','') <= last_day and a.get('presente','FALSE').upper()=='TRUE')
     
-    return {
-        "total_members": total_members,
-        "total_visitors": total_visitors,
-        "today_attendance": len(today_attendance),
-        "month_attendance": len(month_attendance)
-    }
+    return {"total_members": total_members, "total_visitors": total_visitors, "today_attendance": today_attendance, "month_attendance": month_attendance}
 
 # Include router
 app.include_router(api_router)
