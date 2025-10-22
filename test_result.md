@@ -178,24 +178,37 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
-      SECOND ITERATION - Fixed critical issues:
+      THIRD ITERATION - CRITICAL FIXES for quota exceeded and date issues:
+      
+      ROOT CAUSE IDENTIFIED by troubleshoot_agent:
+      - Google Sheets API quota exceeded (429 error)
+      - Promise.all() creating simultaneous API calls
+      - Cache invalidation on every save causing excessive reads
       
       FIXES APPLIED:
-      1. Attendance.js date display:
-         - Changed from new Date(selectedDate) which causes UTC offset
-         - Now uses direct toLocaleString with timeZone: 'America/New_York'
-         - Date now displays correctly in Spanish
+      1. Backend (server.py):
+         - Changed cache strategy: UPDATE in-memory cache instead of invalidating
+         - On update: modify cached record + update sheets
+         - On new: append to cache + append to sheets
+         - Added error logging with details
+         - No more invalidate on every save
       
-      2. Green button matching logic:
-         - Fixed tipo mismatch between 'visitor' and 'friend'
-         - Added compatibility check for both tipos
-         - Console log added to verify data loading
+      2. Frontend (Attendance.js):
+         - Changed from Promise.all() to SEQUENTIAL saves
+         - Added 100ms delay between requests
+         - Partial success handling (shows X of Y saved)
+         - Better error handling per record
       
-      3. Reports.js date initialization:
-         - Updated to use Eastern Time for current date
-         - Month range now calculates correctly
+      3. Cache duration (sheets_cache.py):
+         - Increased from 30 seconds to 300 seconds (5 minutes)
+         - Reduces API calls dramatically
+      
+      4. Date display fix (Attendance.js):
+         - Fixed using Intl.DateTimeFormat with formatToParts()
+         - Properly extracts year, month, day from Eastern Time
+         - No more UTC offset issues
       
       User needs to test:
-      - Date should now show "miércoles, 22 de octubre de 2025" (NOT 21)
-      - Green buttons should appear next to people with attendance marked today
-      - Open browser console to see "Today attendance loaded" message
+      - Date should NOW show correct day (miércoles 22, not martes 21)
+      - Attendance saving should work without errors
+      - Green buttons should appear after saving
