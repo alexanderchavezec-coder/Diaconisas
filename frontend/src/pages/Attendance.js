@@ -165,7 +165,10 @@ export default function Attendance() {
         {people.map((person) => {
           const key = `${tipo}-${person.id}`;
           const name = tipo === 'member' ? `${person.nombre} ${person.apellido}` : person.nombre;
-          const hasAttendanceToday = todayAttendance.has(key);
+          // Check both 'visitor' and 'friend' keys for attendance
+          const hasAttendanceToday = todayAttendance.has(key) || 
+                                      (tipo === 'visitor' && todayAttendance.has(`friend-${person.id}`)) ||
+                                      (tipo === 'friend' && todayAttendance.has(`visitor-${person.id}`));
           return (
             <div
               key={person.id}
