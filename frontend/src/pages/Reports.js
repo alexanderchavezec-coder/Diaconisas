@@ -69,7 +69,7 @@ export default function Reports() {
       const presentFriends = response.data.records.filter(r => r.presente);
       
       // Get full friend details
-      const friendsRes = await axios.get(`${API}/friends`);
+      const friendsRes = await axios.get(`${API}/visitors`);
       const allFriends = friendsRes.data;
       
       // Match and enrich friend data
