@@ -17,9 +17,10 @@ export default function Attendance() {
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Get local date
-  const today = new Date();
-  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  // Get New York date
+  const nyDate = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+  const dateObj = new Date(nyDate);
+  const localDate = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
   const [selectedDate] = useState(localDate);
   
   const [attendance, setAttendance] = useState({});
