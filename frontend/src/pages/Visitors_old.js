@@ -9,81 +9,81 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { toast } from 'sonner';
 import { UserPlus, Edit, Trash2, Search } from 'lucide-react';
 
-export default function Friends() {
-  const [friends, setFriends] = useState([]);
-  const [filteredFriends, setFilteredFriends] = useState([]);
+export default function Visitors() {
+  const [visitors, setVisitors] = useState([]);
+  const [filteredVisitors, setFilteredVisitors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [editingFriend, setEditingFriend] = useState(null);
+  const [editingVisitor, setEditingVisitor] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
     de_donde_viene: '',
   });
 
   useEffect(() => {
-    fetchFriends();
+    fetchVisitors();
   }, []);
 
   useEffect(() => {
-    const filtered = friends.filter(
-      (friend) =>
-        friend.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        friend.de_donde_viene.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = visitors.filter(
+      (visitor) =>
+        visitor.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        visitor.de_donde_viene.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredFriends(filtered);
-  }, [searchTerm, friends]);
+    setFilteredVisitors(filtered);
+  }, [searchTerm, visitors]);
 
-  const fetchFriends = async () => {
+  const fetchVisitors = async () => {
     try {
-      const response = await axios.get(`${API}/friends`);
-      setFriends(response.data);
-      setFilteredFriends(response.data);
+      const response = await axios.get(`${API}/visitors`);
+      setVisitors(response.data);
+      setFilteredVisitors(response.data);
     } catch (error) {
-      toast.error('Error al cargar amigos');
+      toast.error('Error al cargar visitantes');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editingFriend) {
-        await axios.put(`${API}/friends/${editingFriend.id}`, formData);
-        toast.success('Amigo actualizado exitosamente');
+      if (editingVisitor) {
+        await axios.put(`${API}/visitors/${editingVisitor.id}`, formData);
+        toast.success('Visitante actualizado exitosamente');
       } else {
-        await axios.post(`${API}/friends`, formData);
-        toast.success('Amigo registrado exitosamente');
+        await axios.post(`${API}/visitors`, formData);
+        toast.success('Visitante registrado exitosamente');
       }
-      fetchFriends();
+      fetchVisitors();
       setIsOpen(false);
       resetForm();
     } catch (error) {
-      toast.error('Error al guardar amigo');
+      toast.error('Error al guardar visitante');
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar este amigo?')) {
+    if (window.confirm('¿Estás seguro de eliminar este visitante?')) {
       try {
-        await axios.delete(`${API}/friends/${id}`);
-        toast.success('Amigo eliminado exitosamente');
-        fetchFriends();
+        await axios.delete(`${API}/visitors/${id}`);
+        toast.success('Visitante eliminado exitosamente');
+        fetchVisitors();
       } catch (error) {
-        toast.error('Error al eliminar amigo');
+        toast.error('Error al eliminar visitante');
       }
     }
   };
 
-  const openEdit = (friend) => {
-    setEditingFriend(friend);
+  const openEdit = (visitor) => {
+    setEditingVisitor(visitor);
     setFormData({
-      nombre: friend.nombre,
-      de_donde_viene: friend.de_donde_viene,
+      nombre: visitor.nombre,
+      de_donde_viene: visitor.de_donde_viene,
     });
     setIsOpen(true);
   };
 
   const resetForm = () => {
-    setEditingFriend(null);
+    setEditingVisitor(null);
     setFormData({
       nombre: '',
       de_donde_viene: '',
@@ -91,27 +91,27 @@ export default function Friends() {
   };
 
   return (
-    <div className="space-y-6" data-testid="friends-page">
+    <div className="space-y-6" data-testid="visitors-page">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Amigos</h1>
-          <p className="text-gray-600 text-lg">Gestiona los amigos de la iglesia</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Visitantes</h1>
+          <p className="text-gray-600 text-lg">Gestiona los visitantes de la iglesia</p>
         </div>
         <Dialog open={isOpen} onOpenChange={(open) => {
           setIsOpen(open);
           if (!open) resetForm();
         }}>
           <DialogTrigger asChild>
-            <Button data-testid="add-friend-button" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+            <Button data-testid="add-visitor-button" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
               <UserPlus className="mr-2 h-4 w-4" />
-              Agregar Amigo
+              Agregar Visitante
             </Button>
           </DialogTrigger>
-          <DialogContent data-testid="friend-dialog">
+          <DialogContent data-testid="visitor-dialog">
             <DialogHeader>
-              <DialogTitle>{editingFriend ? 'Editar Amigo' : 'Nuevo Amigo'}</DialogTitle>
+              <DialogTitle>{editingVisitor ? 'Editar Visitante' : 'Nuevo Visitante'}</DialogTitle>
               <DialogDescription>
-                {editingFriend ? 'Actualiza la información del amigo' : 'Completa el formulario para registrar un nuevo amigo'}
+                {editingVisitor ? 'Actualiza la información del visitante' : 'Completa el formulario para registrar un nuevo visitante'}
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -119,7 +119,7 @@ export default function Friends() {
                 <Label htmlFor="nombre">Nombre</Label>
                 <Input
                   id="nombre"
-                  data-testid="friend-nombre-input"
+                  data-testid="visitor-nombre-input"
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                   required
@@ -129,15 +129,15 @@ export default function Friends() {
                 <Label htmlFor="de_donde_viene">¿De dónde viene?</Label>
                 <Input
                   id="de_donde_viene"
-                  data-testid="friend-origen-input"
+                  data-testid="visitor-origen-input"
                   value={formData.de_donde_viene}
                   onChange={(e) => setFormData({ ...formData, de_donde_viene: e.target.value })}
                   placeholder="Ciudad, país o referencia"
                   required
                 />
               </div>
-              <Button type="submit" data-testid="friend-submit-button" className="w-full">
-                {editingFriend ? 'Actualizar' : 'Guardar'}
+              <Button type="submit" data-testid="visitor-submit-button" className="w-full">
+                {editingVisitor ? 'Actualizar' : 'Guardar'}
               </Button>
             </form>
           </DialogContent>
@@ -147,7 +147,7 @@ export default function Friends() {
       <div className="relative">
         <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
         <Input
-          data-testid="friend-search-input"
+          data-testid="visitor-search-input"
           placeholder="Buscar por nombre o procedencia..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -157,7 +157,7 @@ export default function Friends() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Amigos ({filteredFriends.length})</CardTitle>
+          <CardTitle>Lista de Visitantes ({filteredVisitors.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -171,35 +171,35 @@ export default function Friends() {
                 </tr>
               </thead>
               <tbody>
-                {filteredFriends.length === 0 ? (
+                {filteredVisitors.length === 0 ? (
                   <tr>
                     <td colSpan="4" className="text-center py-8 text-gray-500">
-                      No hay amigos registrados
+                      No hay visitantes registrados
                     </td>
                   </tr>
                 ) : (
-                  filteredFriends.map((friend) => (
-                    <tr key={friend.id} className="border-b hover:bg-gray-50" data-testid={`friend-row-${friend.id}`}>
-                      <td className="py-3 px-4">{friend.nombre}</td>
-                      <td className="py-3 px-4">{friend.de_donde_viene}</td>
+                  filteredVisitors.map((visitor) => (
+                    <tr key={visitor.id} className="border-b hover:bg-gray-50" data-testid={`visitor-row-${visitor.id}`}>
+                      <td className="py-3 px-4">{visitor.nombre}</td>
+                      <td className="py-3 px-4">{visitor.de_donde_viene}</td>
                       <td className="py-3 px-4">
-                        {new Date(friend.fecha_registro).toLocaleDateString('es-ES')}
+                        {new Date(visitor.fecha_registro).toLocaleDateString('es-ES')}
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex gap-2">
                           <Button
-                            data-testid={`edit-friend-${friend.id}`}
+                            data-testid={`edit-visitor-${visitor.id}`}
                             variant="outline"
                             size="sm"
-                            onClick={() => openEdit(friend)}
+                            onClick={() => openEdit(visitor)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
-                            data-testid={`delete-friend-${friend.id}`}
+                            data-testid={`delete-visitor-${visitor.id}`}
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDelete(friend.id)}
+                            onClick={() => handleDelete(visitor.id)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
