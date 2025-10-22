@@ -479,7 +479,7 @@ export default function Reports() {
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <CalendarIcon className="h-4 w-4" />
-                Seleccionar Fecha para Visitantes
+                Seleccionar Fecha para Amigos
               </Label>
               <Input
                 data-testid="visitors-date-input"
