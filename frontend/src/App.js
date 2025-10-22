@@ -5,7 +5,7 @@ import axios from 'axios';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Members from './pages/Members';
-import Friends from './pages/Friends';
+import Visitors from './pages/Visitors';
 import Attendance from './pages/Attendance';
 import Reports from './pages/Reports';
 import Layout from './components/Layout';
