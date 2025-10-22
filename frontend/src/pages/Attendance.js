@@ -104,7 +104,7 @@ export default function Attendance() {
     if (people.length === 0) {
       return (
         <div className="text-center py-8 text-gray-500">
-          No hay {tipo === 'member' ? 'miembros' : 'visitantes'} registrados
+          No hay {tipo === 'member' ? 'miembros' : 'amigos'} registrados
         </div>
       );
     }
