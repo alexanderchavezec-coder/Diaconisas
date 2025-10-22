@@ -223,10 +223,10 @@ async def update_member(member_id: str, member_input: MemberCreate, current_user
     record = sheets_service.find_row_by_id('Miembros', member_id)
     if not record:
         raise HTTPException(status_code=404, detail="Member not found")
-    values = [member_id, member_input.nombre, member_input.apellido, member_input.direccion, member_input.telefono, record.get('fecha_registro', datetime.now(timezone.utc).isoformat())]
+    values = [member_id, member_input.nombre, member_input.apellido, member_input.direccion, member_input.telefono, record.get('fecha_registro', get_eastern_now().isoformat())]
     sheets_service.update_row('Miembros', record['_row'], values)
     sheets_cache.invalidate('Miembros')
-    return Member(id=member_id, nombre=member_input.nombre, apellido=member_input.apellido, direccion=member_input.direccion, telefono=member_input.telefono, fecha_registro=datetime.fromisoformat(record.get('fecha_registro', datetime.now(timezone.utc).isoformat())))
+    return Member(id=member_id, nombre=member_input.nombre, apellido=member_input.apellido, direccion=member_input.direccion, telefono=member_input.telefono, fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat())))
 
 @api_router.delete("/members/{member_id}")
 async def delete_member(member_id: str, current_user: str = Depends(get_current_user)):
