@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { toast } from 'sonner';
 import { UserPlus, Edit, Trash2, Search } from 'lucide-react';
 
-export default function Friends() {
+export default function Visitors() {
   const [friends, setFriends] = useState([]);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
