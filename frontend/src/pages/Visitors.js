@@ -35,7 +35,7 @@ export default function Visitors() {
 
   const fetchFriends = async () => {
     try {
-      const response = await axios.get(`${API}/friends`);
+      const response = await axios.get(`${API}/visitors`);
       setFriends(response.data);
       setFilteredFriends(response.data);
     } catch (error) {
