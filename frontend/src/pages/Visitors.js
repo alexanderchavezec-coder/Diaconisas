@@ -64,7 +64,7 @@ export default function Visitors() {
   const handleDelete = async (id) => {
     if (window.confirm('¿Estás seguro de eliminar este amigo?')) {
       try {
-        await axios.delete(`${API}/friends/${id}`);
+        await axios.delete(`${API}/visitors/${id}`);
         toast.success('Amigo eliminado exitosamente');
         fetchFriends();
       } catch (error) {
