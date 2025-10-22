@@ -17,11 +17,21 @@ export default function Attendance() {
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Get New York date
-  const nyDate = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-  const dateObj = new Date(nyDate);
-  const localDate = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
-  const [selectedDate] = useState(localDate);
+  // Get New York date correctly
+  const getTodayInNY = () => {
+    const now = new Date();
+    const nyDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    return `${nyDate.getFullYear()}-${String(nyDate.getMonth() + 1).padStart(2, '0')}-${String(nyDate.getDate()).padStart(2, '0')}`;
+  };
+  
+  const [selectedDate] = useState(getTodayInNY());
+  const [displayDate, setDisplayDate] = useState(new Date().toLocaleString('es-ES', { 
+    timeZone: 'America/New_York',
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  }));
   
   const [attendance, setAttendance] = useState({});
   const [todayAttendance, setTodayAttendance] = useState(new Set());
