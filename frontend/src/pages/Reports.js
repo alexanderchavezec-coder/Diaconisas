@@ -331,12 +331,13 @@ export default function Reports() {
               Reporte de Amigos
             </h1>
             <p className="text-lg text-gray-700">
-              {new Date(date).toLocaleDateString('es-ES', { 
+              {new Intl.DateTimeFormat('es-ES', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
-                day: 'numeric' 
-              })}
+                day: 'numeric',
+                timeZone: 'America/New_York'
+              }).format(new Date(date + 'T12:00:00'))}
             </p>
           </div>
 
