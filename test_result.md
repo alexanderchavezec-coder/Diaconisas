@@ -248,3 +248,52 @@ agent_communication:
       - Green button should now appear after saving "Amigos" attendance
       - Report date should match selected date (no more day-1 offset)
       - Console will show attendance set with all IDs for debugging
+  
+  - agent: "main"
+    message: |
+      FIFTH ITERATION - Cache and data retrieval issues:
+      
+      USER REPORTED:
+      1. Report date is correct ✓
+      2. Green buttons still not appearing after saving attendance
+      3. Report shows empty despite saving 2 amigos
+      
+      ROOT CAUSE ANALYSIS:
+      - Cache duration too long (5 minutes)
+      - /attendance/today was using cached data
+      - New attendance saved to cache but cache might be stale
+      - Reports backend correctly handles visitor/friend compatibility
+      
+      FIXES APPLIED:
+      1. sheets_cache.py:
+         - Reduced cache from 300s (5min) to 60s (1min)
+         - Balance between quota limits and data freshness
+      
+      2. server.py - /attendance/today endpoint:
+         - Changed to ALWAYS read fresh from Google Sheets
+         - No longer uses cache for today's attendance
+         - Added extensive logging:
+           * Today's date
+           * Total records count
+           * Each record comparison
+           * Final matching records
+         - Ensures green buttons show immediately
+      
+      3. server.py - attendance save:
+         - Added logging for save operations
+         - Logs: tipo, person_id, person_name, fecha, presente
+         - Logs cache update confirmation
+      
+      DEBUGGING INFO:
+      - Backend logs now show:
+         * What date is "today"
+         * All records being checked
+         * Which records match today's date
+         * Person IDs and tipos returned
+      
+      USER ACTION NEEDED:
+      1. Recarga página (Ctrl+F5)
+      2. Marca asistencia de 2 amigos y guarda
+      3. Verifica que aparezcan botones verdes
+      4. Genera reporte "Amigos del Día"
+      5. Si sigue fallando, compartir logs del navegador console
