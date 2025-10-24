@@ -273,12 +273,13 @@ export default function Reports() {
             <div>
               <CardTitle className="text-2xl">Reporte de Amigos</CardTitle>
               <p className="text-gray-600 mt-2">
-                {new Date(date).toLocaleDateString('es-ES', { 
+                {new Intl.DateTimeFormat('es-ES', { 
                   weekday: 'long', 
                   year: 'numeric', 
                   month: 'long', 
-                  day: 'numeric' 
-                })}
+                  day: 'numeric',
+                  timeZone: 'America/New_York'
+                }).format(new Date(date + 'T12:00:00'))}
               </p>
             </div>
             <Button
