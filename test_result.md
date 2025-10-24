@@ -329,3 +329,33 @@ agent_communication:
       - Google Sheets will save friend rows for today
       - Green buttons will appear
       - Reports will show friends data
+  
+  - agent: "main"
+    message: |
+      SEVENTH ITERATION - Date calculation in Reports showing wrong day
+      
+      USER REPORTED:
+      - Reports page showing October 24 when today is October 23
+      - Dates in date range picker off by 1 day
+      
+      ROOT CAUSE:
+      - Line 16 in Reports.js used unreliable method:
+        new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
+      - This creates Date object that can be off by a day due to parsing issues
+      
+      FIX APPLIED:
+      - Replaced with Intl.DateTimeFormat + formatToParts()
+      - Same reliable method used in Attendance.js
+      - Extracts year, month, day directly from Eastern Time
+      - Calculates todayDate, firstDay, lastDay correctly
+      
+      CODE CHANGE:
+      - Created getTodayInNY() helper function
+      - Returns { year, month, day, dateString }
+      - Used for all date calculations in Reports
+      
+      EXPECTED RESULT:
+      - Reports date range should show correct dates for October 23
+      - Start date: 10/01/2025
+      - End date: 10/31/2025
+      - All dates should match Eastern Time correctly
