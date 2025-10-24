@@ -297,3 +297,35 @@ agent_communication:
       3. Verifica que aparezcan botones verdes
       4. Genera reporte "Amigos del Día"
       5. Si sigue fallando, compartir logs del navegador console
+  
+  - agent: "main"
+    message: |
+      SIXTH ITERATION - CRITICAL BUG FOUND: Friends not saving
+      
+      USER INSIGHT: ✅ Correctly identified that friends weren't being saved to Google Sheets
+      
+      ROOT CAUSE (Type Mismatch):
+      - Line 327: renderAttendanceList(filteredFriends, 'visitor')
+      - Line 129: When checkbox clicked, creates key 'visitor-{id}'
+      - Line 138: When building save list, creates 'friend' tipo
+      - Line 144: Checks if 'friend-{id}' exists in attendance object
+      - Result: Keys NEVER match! Friends checkboxes not found in save loop
+      
+      EVIDENCE FROM LOGS:
+      - Only saw "Saving attendance" for members (Juan Perez)
+      - Zero logs for friends being saved
+      - Google Sheets shows no friend records for 2025-10-23
+      
+      FIX APPLIED:
+      - Changed line 327 from 'visitor' to 'friend'
+      - Now tipo is consistent throughout:
+        * Checkbox key: 'friend-{id}'
+        * Save lookup: 'friend-{id}'
+        * Sent to backend: tipo='friend'
+      
+      EXPECTED RESULT:
+      - Friends checkboxes will now be detected in save loop
+      - Backend will receive friend attendance records
+      - Google Sheets will save friend rows for today
+      - Green buttons will appear
+      - Reports will show friends data
