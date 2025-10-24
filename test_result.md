@@ -394,3 +394,23 @@ agent_communication:
       3. Attendance automatically created for today with presente=TRUE
       4. Friend appears in today's attendance with green button
       5. Friend appears in "Amigos del Día" report for today
+  
+  - agent: "main"
+    message: |
+      NINTH ITERATION - Remove "Made with Emergent" badge
+      
+      USER REQUEST:
+      - Remove "Made with Emergent" button/badge
+      - Reason: Anti-aesthetic and blocks other buttons
+      
+      IMPLEMENTATION:
+      - Located badge in /app/frontend/public/index.html (lines 65-111)
+      - Badge was a fixed position link at bottom-right corner
+      - z-index: 9999 - very high, was covering other elements
+      - Completely removed the <a> tag and all its content
+      
+      RESULT:
+      - Badge completely removed
+      - No more visual clutter
+      - Other buttons no longer blocked
+      - Cleaner, more professional appearance
