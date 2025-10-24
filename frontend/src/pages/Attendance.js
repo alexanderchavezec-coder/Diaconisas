@@ -324,7 +324,7 @@ export default function Attendance() {
             <CardHeader>
               <CardTitle>Amigos ({filteredFriends.length})</CardTitle>
             </CardHeader>
-            <CardContent>{renderAttendanceList(filteredFriends, 'visitor')}</CardContent>
+            <CardContent>{renderAttendanceList(filteredFriends, 'friend')}</CardContent>
           </Card>
         </TabsContent>
       </Tabs>
