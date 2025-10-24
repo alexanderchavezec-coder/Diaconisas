@@ -380,17 +380,18 @@ async def get_today_attendance(current_user: str = Depends(get_current_user)):
     today = get_eastern_today()
     logger.info(f"Getting attendance for today: {today}")
     
-    cached_data = sheets_cache.get('Asistencia')
-    records = cached_data if cached_data else sheets_service.read_all('Asistencia')
-    if not cached_data:
-        sheets_cache.set('Asistencia', records)
+    # Force refresh from sheets to ensure latest data
+    records = sheets_service.read_all('Asistencia')
+    sheets_cache.set('Asistencia', records)
     
     logger.info(f"Total attendance records: {len(records)}")
     
     # Return list of person_ids with attendance today (both present and absent)
     today_people = []
     for r in records:
-        if r.get('fecha') == today:
+        fecha_record = r.get('fecha', '')
+        logger.info(f"Checking record: person_id={r.get('person_id')}, tipo={r.get('tipo')}, fecha={fecha_record}, today={today}")
+        if fecha_record == today:
             today_people.append({
                 'person_id': r.get('person_id', ''),
                 'tipo': r.get('tipo', ''),
