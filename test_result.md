@@ -212,3 +212,39 @@ agent_communication:
       - Date should NOW show correct day (miércoles 22, not martes 21)
       - Attendance saving should work without errors
       - Green buttons should appear after saving
+  
+  - agent: "main"
+    message: |
+      FOURTH ITERATION - Fixed green button and report date issues:
+      
+      USER REPORTED ISSUES:
+      1. Green button not showing after saving attendance for "Amigos"
+      2. Report "Amigos del Día" showing wrong date (day before)
+      
+      ROOT CAUSES:
+      1. fetchTodayAttendance() was normalizing 'friend' to 'visitor' only
+         - Frontend saves as 'friend' type
+         - Backend returns 'friend' type
+         - But Set only had 'visitor' keys, not 'friend'
+      
+      2. Reports.js using new Date(date).toLocaleDateString()
+         - Creates Date object in UTC causing -1 day offset
+         - Same problem as Attendance page before
+      
+      FIXES APPLIED:
+      1. Attendance.js - fetchTodayAttendance():
+         - Now adds BOTH original tipo AND cross-compatibility keys
+         - If tipo is 'visitor', also adds 'friend-{id}'
+         - If tipo is 'friend', also adds 'visitor-{id}'
+         - Added more console.log for debugging
+      
+      2. Reports.js - Date display (2 places):
+         - Changed from new Date(date).toLocaleDateString()
+         - To: Intl.DateTimeFormat with timeZone: 'America/New_York'
+         - Added T12:00:00 to date string to avoid UTC midnight offset
+         - Fixed in both screen display and print view
+      
+      EXPECTED RESULTS:
+      - Green button should now appear after saving "Amigos" attendance
+      - Report date should match selected date (no more day-1 offset)
+      - Console will show attendance set with all IDs for debugging
