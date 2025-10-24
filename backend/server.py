@@ -244,6 +244,30 @@ async def create_visitor(visitor_input: VisitorCreate, current_user: str = Depen
     values = [visitor_obj.id, visitor_obj.nombre, visitor_obj.de_donde_viene, visitor_obj.fecha_registro.isoformat()]
     sheets_service.append_row('Amigos', values)
     sheets_cache.invalidate('Amigos')
+    
+    # Automatically mark attendance for today
+    today = get_eastern_today()
+    attendance_obj = Attendance(
+        tipo='friend',
+        person_id=visitor_obj.id,
+        person_name=visitor_obj.nombre,
+        fecha=today,
+        presente=True
+    )
+    attendance_values = [
+        attendance_obj.tipo,
+        attendance_obj.person_id,
+        attendance_obj.person_name,
+        attendance_obj.fecha,
+        'TRUE',
+        attendance_obj.id,
+        attendance_obj.created_at.isoformat()
+    ]
+    sheets_service.append_row('Asistencia', attendance_values)
+    sheets_cache.invalidate('Asistencia')
+    
+    logger.info(f"Auto-attendance created for new friend: {visitor_obj.nombre} on {today}")
+    
     return visitor_obj
 
 @api_router.get("/visitors", response_model=List[Visitor])
