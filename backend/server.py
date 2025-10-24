@@ -333,10 +333,13 @@ async def create_attendance(attendance_input: AttendanceCreate, current_user: st
         
         attendance_obj = Attendance(**attendance_input.model_dump())
         values = [attendance_obj.tipo, attendance_obj.person_id, attendance_obj.person_name, attendance_obj.fecha, 'TRUE' if attendance_obj.presente else 'FALSE', attendance_obj.id, attendance_obj.created_at.isoformat()]
+        
+        logger.info(f"Saving attendance: tipo={attendance_obj.tipo}, person_id={attendance_obj.person_id}, person_name={attendance_obj.person_name}, fecha={attendance_obj.fecha}, presente={attendance_obj.presente}")
+        
         sheets_service.append_row('Asistencia', values)
         
         # Add to cache instead of invalidating
-        records.append({
+        new_record = {
             'tipo': attendance_obj.tipo,
             'person_id': attendance_obj.person_id,
             'person_name': attendance_obj.person_name,
@@ -344,8 +347,11 @@ async def create_attendance(attendance_input: AttendanceCreate, current_user: st
             'presente': 'TRUE' if attendance_obj.presente else 'FALSE',
             'id': attendance_obj.id,
             'created_at': attendance_obj.created_at.isoformat()
-        })
+        }
+        records.append(new_record)
         sheets_cache.set('Asistencia', records)
+        
+        logger.info(f"Attendance saved successfully. Cache updated with {len(records)} records")
         
         return attendance_obj
     except Exception as e:
