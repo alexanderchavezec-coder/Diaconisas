@@ -11,16 +11,26 @@ import { FileText, TrendingUp, Printer, Calendar as CalendarIcon } from 'lucide-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function Reports() {
-  // Get Eastern Time date
-  const now = new Date();
-  const nyDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-  const year = nyDate.getFullYear();
-  const month = String(nyDate.getMonth() + 1).padStart(2, '0');
-  const day = String(nyDate.getDate()).padStart(2, '0');
-  const todayDate = `${year}-${month}-${day}`;
+  // Get Eastern Time date using Intl.DateTimeFormat
+  const getTodayInNY = () => {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    const parts = formatter.formatToParts(now);
+    const year = parts.find(p => p.type === 'year').value;
+    const month = parts.find(p => p.type === 'month').value;
+    const day = parts.find(p => p.type === 'day').value;
+    return { year, month, day, dateString: `${year}-${month}-${day}` };
+  };
+  
+  const { year, month, day, dateString: todayDate } = getTodayInNY();
   
   const firstDay = `${year}-${month}-01`;
-  const lastDayOfMonth = new Date(year, nyDate.getMonth() + 1, 0).getDate();
+  const lastDayOfMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
   const lastDay = `${year}-${month}-${String(lastDayOfMonth).padStart(2, '0')}`;
   
   const [reportType, setReportType] = useState('date-range');
