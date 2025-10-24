@@ -359,3 +359,38 @@ agent_communication:
       - Start date: 10/01/2025
       - End date: 10/31/2025
       - All dates should match Eastern Time correctly
+  
+  - agent: "main"
+    message: |
+      EIGHTH ITERATION - Auto-attendance when creating friend
+      
+      USER REQUEST:
+      - When creating a new friend (Amigo), automatically mark their attendance for that day
+      - Makes sense from workflow perspective - if registering a new friend, they're likely present
+      
+      IMPLEMENTATION:
+      - Modified POST /visitors endpoint (line 241)
+      - After creating friend in "Amigos" sheet:
+        1. Gets today's date (Eastern Time)
+        2. Creates Attendance object with:
+           - tipo: 'friend'
+           - person_id: new friend's ID
+           - person_name: friend's name
+           - fecha: today's date
+           - presente: True (automatically marked present)
+        3. Saves to "Asistencia" sheet
+        4. Invalidates attendance cache
+        5. Logs the auto-attendance creation
+      
+      BENEFITS:
+      - Streamlines workflow
+      - No need to manually mark attendance after creating friend
+      - Friend immediately shows in reports for today
+      - Green button will appear automatically in attendance page
+      
+      EXPECTED BEHAVIOR:
+      1. User creates new friend "Pedro Sanchez" from "Colombia"
+      2. Friend saved to Amigos sheet
+      3. Attendance automatically created for today with presente=TRUE
+      4. Friend appears in today's attendance with green button
+      5. Friend appears in "Amigos del Día" report for today
