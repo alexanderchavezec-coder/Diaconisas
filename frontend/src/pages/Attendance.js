@@ -107,16 +107,19 @@ export default function Attendance() {
       const response = await axios.get(`${API}/attendance/today`);
       const attendanceSet = new Set();
       response.data.forEach((record) => {
-        // Normalize tipo: both 'visitor' and 'friend' should match
-        const normalizedTipo = (record.tipo === 'visitor' || record.tipo === 'friend') ? 'visitor' : record.tipo;
-        attendanceSet.add(`${normalizedTipo}-${record.person_id}`);
-        // Also add with 'friend' type for compatibility
-        if (normalizedTipo === 'visitor') {
+        // Add both the original tipo and normalized versions
+        attendanceSet.add(`${record.tipo}-${record.person_id}`);
+        
+        // Add cross-compatibility between 'visitor' and 'friend'
+        if (record.tipo === 'visitor') {
           attendanceSet.add(`friend-${record.person_id}`);
+        } else if (record.tipo === 'friend') {
+          attendanceSet.add(`visitor-${record.person_id}`);
         }
       });
       setTodayAttendance(attendanceSet);
       console.log('Today attendance loaded:', attendanceSet);
+      console.log('Today attendance people IDs:', Array.from(attendanceSet));
     } catch (error) {
       console.error('Error al cargar asistencia de hoy:', error);
     }
