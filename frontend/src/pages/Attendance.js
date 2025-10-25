@@ -253,32 +253,8 @@ export default function Attendance() {
     <div className="space-y-6" data-testid="attendance-page">
       <div>
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Registro de Asistencia</h1>
-        <p className="text-gray-600 text-lg">Marca la asistencia de miembros y amigos</p>
+        <p className="text-gray-600 text-lg">Marca la asistencia de miembros y amigos - {displayDate}</p>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Fecha de Registro
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Registrando asistencia para</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {displayDate}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>
