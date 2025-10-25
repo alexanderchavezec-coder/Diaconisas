@@ -439,3 +439,48 @@ agent_communication:
       - Date still visible but more compact
       - Better for smaller screens (like iPad)
       - Information hierarchy improved
+  
+  - agent: "main"
+    message: |
+      ELEVENTH ITERATION - Fix iPad keyboard covering form inputs
+      
+      USER PROBLEM:
+      - When adding new member or friend on iPad
+      - Keyboard appears and covers input fields
+      - Unable to see what's being typed in lower fields
+      
+      ROOT CAUSE:
+      - Modal positioned with fixed top-50% and translate-y
+      - No max-height or overflow handling
+      - No automatic scroll when input focused
+      
+      SOLUTIONS IMPLEMENTED:
+      
+      1. dialog.jsx component:
+         - Added: max-h-[90vh] (maximum 90% viewport height)
+         - Added: overflow-y-auto (enable vertical scroll)
+         - Modal can now scroll when content exceeds viewport
+      
+      2. App.css - iOS/iPad specific fixes:
+         - Added @supports (-webkit-touch-callout: none) for iOS detection
+         - Set max-height: 85vh for iOS specifically
+         - Added -webkit-overflow-scrolling: touch for smooth iOS scrolling
+         - Added overscroll-behavior: contain to prevent page scroll
+         - Custom scrollbar styling for modal
+      
+      3. Members.js & Visitors.js - Auto-scroll on focus:
+         - Added useEffect with focus event listener
+         - When input receives focus:
+           * Wait 300ms (for keyboard animation)
+           * Scroll focused input to center of viewport
+           * Uses scrollIntoView with smooth behavior
+         - Works for all INPUT and TEXTAREA elements
+      
+      EXPECTED BEHAVIOR:
+      1. User clicks "Nuevo Miembro" or "Nuevo Amigo"
+      2. Modal opens with scrollable content
+      3. User taps on any input field
+      4. Keyboard appears
+      5. Input automatically scrolls to center
+      6. User can see what they're typing
+      7. Can scroll modal to access all fields
