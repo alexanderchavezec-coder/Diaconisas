@@ -414,3 +414,28 @@ agent_communication:
       - No more visual clutter
       - Other buttons no longer blocked
       - Cleaner, more professional appearance
+  
+  - agent: "main"
+    message: |
+      TENTH ITERATION - Remove redundant date display card
+      
+      USER REQUEST:
+      - Remove repetitive date information in Attendance page
+      - Optimize screen space
+      
+      WHAT WAS REMOVED:
+      - Entire "Fecha de Registro" Card (lines 259-281)
+      - Large blue box showing "Registrando asistencia para [date]"
+      - Calendar icon and elaborate styling
+      
+      WHAT WAS CHANGED:
+      - Moved date display to subtitle
+      - Changed from: "Marca la asistencia de miembros y amigos"
+      - To: "Marca la asistencia de miembros y amigos - [date]"
+      
+      BENEFITS:
+      - More screen space for member/friend lists
+      - Less visual clutter
+      - Date still visible but more compact
+      - Better for smaller screens (like iPad)
+      - Information hierarchy improved
