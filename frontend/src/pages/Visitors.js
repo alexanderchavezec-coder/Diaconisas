@@ -24,6 +24,22 @@ export default function Visitors() {
     fetchFriends();
   }, []);
 
+  // Handle input focus for iOS/iPad - scroll into view
+  useEffect(() => {
+    const handleInputFocus = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        setTimeout(() => {
+          e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+    };
+
+    document.addEventListener('focus', handleInputFocus, true);
+    return () => {
+      document.removeEventListener('focus', handleInputFocus, true);
+    };
+  }, []);
+
   useEffect(() => {
     const filtered = friends.filter(
       (friend) =>
