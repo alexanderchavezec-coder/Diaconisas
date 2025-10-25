@@ -32,6 +32,35 @@ input, select, textarea {
   font-size: 16px; /* Prevent zoom on iOS */
 }
 
+/* Fix for iOS/iPad keyboard covering inputs in modals */
+@supports (-webkit-touch-callout: none) {
+  /* iOS/iPad Safari specific */
+  [role="dialog"] {
+    position: fixed !important;
+    top: 50% !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Ensure modal content is scrollable on mobile */
+[role="dialog"] {
+  max-height: 90vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Smooth scrolling for modal content */
+[role="dialog"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+[role="dialog"]::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
