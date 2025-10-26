@@ -466,12 +466,39 @@ async def get_report_by_date_range(start: str, end: str, tipo: str = "all", curr
     if not cached_data:
         sheets_cache.set('Asistencia', records)
     
+    # Get valid person IDs to filter out deleted records
+    valid_person_ids = set()
+    
+    # Get valid member IDs
+    members_cached = sheets_cache.get('Miembros')
+    members = members_cached if members_cached else sheets_service.read_all('Miembros')
+    if not members_cached:
+        sheets_cache.set('Miembros', members)
+    for m in members:
+        if m.get('id'):
+            valid_person_ids.add(m.get('id'))
+    
+    # Get valid friend IDs
+    friends_cached = sheets_cache.get('Amigos')
+    friends = friends_cached if friends_cached else sheets_service.read_all('Amigos')
+    if not friends_cached:
+        sheets_cache.set('Amigos', friends)
+    for f in friends:
+        if f.get('id'):
+            valid_person_ids.add(f.get('id'))
+    
     filtered = []
     for r in records:
         if start <= r.get('fecha','') <= end:
             rt = r.get('tipo','')
+            person_id = r.get('person_id','')
+            
+            # Filter out attendance records for deleted people
+            if person_id not in valid_person_ids:
+                continue
+            
             if tipo=="all" or (tipo=="visitor" and rt in ['visitor','friend']) or tipo==rt:
-                filtered.append({'tipo':rt, 'person_id':r.get('person_id',''), 'person_name':r.get('person_name',''), 'fecha':r.get('fecha',''), 'presente':r.get('presente','FALSE').upper()=='TRUE'})
+                filtered.append({'tipo':rt, 'person_id':person_id, 'person_name':r.get('person_name',''), 'fecha':r.get('fecha',''), 'presente':r.get('presente','FALSE').upper()=='TRUE'})
     
     total_records = len(filtered)
     present_count = sum(1 for r in filtered if r['presente'])
