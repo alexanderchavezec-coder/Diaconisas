@@ -23,6 +23,13 @@ class SheetsService:
             self.client = gspread.authorize(creds)
             self.spreadsheet_id = '1kXfyAMTqZovXA6rzM2cYXbyoDYJdQwXs3-tdawvy-Aw'
             self.spreadsheet = self.client.open_by_key(self.spreadsheet_id)
+            
+            # Define expected headers for each sheet to avoid duplicate empty column issues
+            self.expected_headers = {
+                'Miembros': ['id', 'nombre', 'apellido', 'direccion', 'telefono', 'fecha_registro'],
+                'Amigos': ['id', 'nombre', 'de_donde_viene', 'fecha_registro'],
+                'Asistencia': ['tipo', 'person_id', 'person_name', 'fecha', 'presente', 'id', 'created_at']
+            }
         except Exception as e:
             raise Exception(f"Failed to initialize Sheets service: {str(e)}")
     
@@ -40,7 +47,11 @@ class SheetsService:
         """Read all records from a sheet"""
         try:
             worksheet = self.get_worksheet(sheet_name)
-            return worksheet.get_all_records()
+            # Use expected_headers if defined to avoid issues with empty duplicate columns
+            if sheet_name in self.expected_headers:
+                return worksheet.get_all_records(expected_headers=self.expected_headers[sheet_name])
+            else:
+                return worksheet.get_all_records()
         except Exception as e:
             raise Exception(f"Read error: {str(e)}")
     
