@@ -98,21 +98,9 @@ export default function Login({ onLogin }) {
               className="w-full h-11 text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               disabled={loading}
             >
-              {loading ? 'Procesando...' : isRegister ? 'Registrarse' : 'Ingresar'}
+              {loading ? 'Procesando...' : 'Ingresar'}
             </Button>
           </form>
-          <div className="mt-6 text-center">
-            <button
-              type="button"
-              data-testid="toggle-register-button"
-              onClick={() => setIsRegister(!isRegister)}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-            >
-              {isRegister
-                ? '¿Ya tienes cuenta? Inicia sesión'
-                : '¿No tienes cuenta? Regístrate'}
-            </button>
-          </div>
         </CardContent>
       </Card>
     </div>
