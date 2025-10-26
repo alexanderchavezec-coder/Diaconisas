@@ -194,13 +194,23 @@ async def get_members(current_user: str = Depends(get_current_user)):
     members = []
     for record in records:
         if record.get('id'):
+            # Handle empty fecha_registro
+            fecha_str = record.get('fecha_registro', '').strip()
+            if not fecha_str:
+                fecha_registro = get_eastern_now()
+            else:
+                try:
+                    fecha_registro = datetime.fromisoformat(fecha_str)
+                except ValueError:
+                    fecha_registro = get_eastern_now()
+            
             members.append(Member(
                 id=record['id'],
                 nombre=record.get('nombre', ''),
                 apellido=record.get('apellido', ''),
                 direccion=record.get('direccion', ''),
                 telefono=str(record.get('telefono', '')),
-                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat()))
+                fecha_registro=fecha_registro
             ))
     return members
 
