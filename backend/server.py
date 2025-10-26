@@ -308,7 +308,7 @@ async def get_visitors(current_user: str = Depends(get_current_user)):
                 id=record['id'],
                 nombre=record.get('nombre', ''),
                 de_donde_viene=record.get('de_donde_viene', ''),
-                fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat()))
+                fecha_registro=parse_fecha_registro(record.get('fecha_registro'))
             ))
     return visitors
 
@@ -317,7 +317,7 @@ async def get_visitor(visitor_id: str, current_user: str = Depends(get_current_u
     record = sheets_service.find_row_by_id('Amigos', visitor_id)
     if not record:
         raise HTTPException(status_code=404, detail="Visitor not found")
-    return Visitor(id=record['id'], nombre=record.get('nombre', ''), de_donde_viene=record.get('de_donde_viene', ''), fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat())))
+    return Visitor(id=record['id'], nombre=record.get('nombre', ''), de_donde_viene=record.get('de_donde_viene', ''), fecha_registro=parse_fecha_registro(record.get('fecha_registro')))
 
 @api_router.put("/visitors/{visitor_id}", response_model=Visitor)
 async def update_visitor(visitor_id: str, visitor_input: VisitorCreate, current_user: str = Depends(get_current_user)):
