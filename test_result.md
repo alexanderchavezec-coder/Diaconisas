@@ -484,3 +484,59 @@ agent_communication:
       5. Input automatically scrolls to center
       6. User can see what they're typing
       7. Can scroll modal to access all fields
+  
+  - agent: "main"
+    message: |
+      TWELFTH ITERATION - Fixed Google Sheets data loading errors
+      
+      USER REPORTED:
+      - Dashboard showing "Error al cargar estadísticas" (all stats showing 0)
+      - Members page showing "Error al cargar miembros" (empty list)
+      - Friends page working correctly
+      
+      ROOT CAUSE ANALYSIS:
+      1. Google Sheets Header Issue:
+         - "Miembros" sheet had 1007 total columns
+         - 1001 empty columns in header row
+         - gspread's get_all_records() treats empty strings as duplicate headers
+         - Error: "the header row in the worksheet contains duplicates: ['']"
+      
+      2. Empty fecha_registro Fields:
+         - Some records in "Miembros" had empty fecha_registro values
+         - datetime.fromisoformat('') was throwing ValueError
+         - Caused HTTP 500 errors on /api/members endpoint
+      
+      FIXES APPLIED:
+      
+      1. sheets_service.py:
+         - Added expected_headers dictionary for all sheets:
+           * Miembros: ['id', 'nombre', 'apellido', 'direccion', 'telefono', 'fecha_registro']
+           * Amigos: ['id', 'nombre', 'de_donde_viene', 'fecha_registro']
+           * Asistencia: ['tipo', 'person_id', 'person_name', 'fecha', 'presente', 'id', 'created_at']
+         - Modified read_all() to use expected_headers parameter
+         - Filters out empty string keys from records
+      
+      2. server.py - Created helper function:
+         - parse_fecha_registro(fecha_str): Safely parses dates
+         - Returns get_eastern_now() for empty/invalid values
+         - Handles None, empty strings, and invalid ISO formats
+      
+      3. server.py - Updated all endpoints:
+         - GET /members (list): Fixed fecha_registro parsing with try/except
+         - GET /members/{id}: Uses parse_fecha_registro()
+         - PUT /members/{id}: Uses parse_fecha_registro()
+         - GET /visitors (list): Uses parse_fecha_registro()
+         - GET /visitors/{id}: Uses parse_fecha_registro()
+         - PUT /visitors/{id}: Uses parse_fecha_registro()
+      
+      RESULTS:
+      ✅ Dashboard: Loading correctly
+         - Total Miembros: 3
+         - Total Amigos: 10
+         - Asistencia Hoy: 7
+         - Asistencia del Mes: 24
+      
+      ✅ Members Page: Loading 3 members correctly
+      ✅ Friends Page: Still working (10 friends)
+      ✅ No more 500 errors
+      ✅ All data displays correctly
