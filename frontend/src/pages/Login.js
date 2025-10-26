@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import { Church, User, Lock } from 'lucide-react';
 
 export default function Login({ onLogin }) {
-  const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,13 +18,12 @@ export default function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const endpoint = isRegister ? '/auth/register' : '/auth/login';
-      const response = await axios.post(`${API}${endpoint}`, {
+      const response = await axios.post(`${API}/auth/login`, {
         username,
         password,
       });
 
-      toast.success(isRegister ? '¡Registro exitoso!' : '¡Bienvenido!');
+      toast.success('¡Bienvenido!');
       onLogin(response.data.access_token);
     } catch (error) {
       toast.error(
