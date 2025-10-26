@@ -48,7 +48,7 @@ export default function Login({ onLogin }) {
             </div>
           </div>
           <CardTitle className="text-3xl font-bold">
-            {isRegister ? 'Crear Cuenta' : 'Iniciar Sesión'}
+            Iniciar Sesión
           </CardTitle>
           <CardDescription className="text-base">
             IASD Danbury - Control de Asistencia
