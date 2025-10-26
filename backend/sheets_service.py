@@ -77,11 +77,35 @@ class SheetsService:
     
     # CREATE Operation
     def append_row(self, sheet_name: str, values: List) -> Dict:
-        """Append a new row to the sheet"""
+        """Append a new row to the sheet in the first columns"""
         try:
             worksheet = self.get_worksheet(sheet_name)
-            worksheet.append_row(values, value_input_option='USER_ENTERED')
-            return {"success": True}
+            
+            # Get the number of expected columns for this sheet
+            if sheet_name in self.expected_headers:
+                num_cols = len(self.expected_headers[sheet_name])
+            else:
+                # Fall back to header row length
+                header = worksheet.row_values(1)
+                # Find first empty cell in header to determine actual column count
+                num_cols = len([h for h in header if h.strip()])
+            
+            # Find the next empty row
+            all_values = worksheet.col_values(1)  # Get first column to find next row
+            next_row = len(all_values) + 1
+            
+            # Ensure values list matches expected column count
+            if len(values) < num_cols:
+                values.extend([''] * (num_cols - len(values)))
+            elif len(values) > num_cols:
+                values = values[:num_cols]
+            
+            # Write to specific range (e.g., A5:F5 for 6 columns)
+            end_col_letter = chr(64 + num_cols)  # A=65, so A=chr(65), B=chr(66), etc.
+            cell_range = f"A{next_row}:{end_col_letter}{next_row}"
+            
+            worksheet.update([values], cell_range, value_input_option='USER_ENTERED')
+            return {"success": True, "row": next_row, "range": cell_range}
         except Exception as e:
             raise Exception(f"Append error: {str(e)}")
     
