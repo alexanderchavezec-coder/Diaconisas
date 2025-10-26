@@ -49,9 +49,17 @@ class SheetsService:
             worksheet = self.get_worksheet(sheet_name)
             # Use expected_headers if defined to avoid issues with empty duplicate columns
             if sheet_name in self.expected_headers:
-                return worksheet.get_all_records(expected_headers=self.expected_headers[sheet_name])
+                records = worksheet.get_all_records(expected_headers=self.expected_headers[sheet_name])
             else:
-                return worksheet.get_all_records()
+                records = worksheet.get_all_records()
+            
+            # Filter out empty string keys from each record
+            cleaned_records = []
+            for record in records:
+                cleaned_record = {k: v for k, v in record.items() if k != ''}
+                cleaned_records.append(cleaned_record)
+            
+            return cleaned_records
         except Exception as e:
             raise Exception(f"Read error: {str(e)}")
     
