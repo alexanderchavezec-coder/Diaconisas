@@ -186,8 +186,16 @@ async def login(user_input: UserLogin):
 async def create_member(member_input: MemberCreate, current_user: str = Depends(get_current_user)):
     member_obj = Member(**member_input.model_dump())
     values = [member_obj.id, member_obj.nombre, member_obj.apellido, member_obj.direccion, member_obj.telefono, member_obj.fecha_registro.isoformat()]
-    sheets_service.append_row('Miembros', values)
-    sheets_cache.invalidate('Miembros')  # Invalidar caché
+    logger.info(f"Creating member: {member_obj.nombre} {member_obj.apellido}, ID: {member_obj.id}")
+    logger.info(f"Values to append: {values}")
+    try:
+        result = sheets_service.append_row('Miembros', values)
+        logger.info(f"Append result: {result}")
+        sheets_cache.invalidate('Miembros')  # Invalidar caché
+        logger.info(f"Member created successfully: {member_obj.nombre}")
+    except Exception as e:
+        logger.error(f"Error creating member: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error saving member: {str(e)}")
     return member_obj
 
 @api_router.get("/members", response_model=List[Member])
