@@ -324,10 +324,13 @@ async def update_visitor(visitor_id: str, visitor_input: VisitorCreate, current_
     record = sheets_service.find_row_by_id('Amigos', visitor_id)
     if not record:
         raise HTTPException(status_code=404, detail="Visitor not found")
-    values = [visitor_id, visitor_input.nombre, visitor_input.de_donde_viene, record.get('fecha_registro', get_eastern_now().isoformat())]
+    fecha_registro_str = record.get('fecha_registro', '').strip()
+    if not fecha_registro_str:
+        fecha_registro_str = get_eastern_now().isoformat()
+    values = [visitor_id, visitor_input.nombre, visitor_input.de_donde_viene, fecha_registro_str]
     sheets_service.update_row('Amigos', record['_row'], values)
     sheets_cache.invalidate('Amigos')
-    return Visitor(id=visitor_id, nombre=visitor_input.nombre, de_donde_viene=visitor_input.de_donde_viene, fecha_registro=datetime.fromisoformat(record.get('fecha_registro', get_eastern_now().isoformat())))
+    return Visitor(id=visitor_id, nombre=visitor_input.nombre, de_donde_viene=visitor_input.de_donde_viene, fecha_registro=parse_fecha_registro(fecha_registro_str))
 
 @api_router.delete("/visitors/{visitor_id}")
 async def delete_visitor(visitor_id: str, current_user: str = Depends(get_current_user)):
