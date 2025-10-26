@@ -37,6 +37,15 @@ def get_eastern_today():
     """Get today's date in Eastern timezone as YYYY-MM-DD string"""
     return get_eastern_now().strftime('%Y-%m-%d')
 
+def parse_fecha_registro(fecha_str):
+    """Safely parse fecha_registro from Google Sheets, handling empty/invalid values"""
+    if not fecha_str or not str(fecha_str).strip():
+        return get_eastern_now()
+    try:
+        return datetime.fromisoformat(str(fecha_str).strip())
+    except (ValueError, AttributeError):
+        return get_eastern_now()
+
 # Security
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
