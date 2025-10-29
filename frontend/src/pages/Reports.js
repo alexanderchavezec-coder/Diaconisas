@@ -463,6 +463,80 @@ export default function Reports() {
     );
   };
 
+  const renderBirthdaysReport = () => {
+    if (!reportData || !reportData.birthdays) return null;
+
+    const { birthdays, total, date_range } = reportData;
+
+    return (
+      <div className="space-y-6 no-print">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarIcon className="h-5 w-5" />
+              Reporte de Cumpleañeros
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-gray-600">
+                    Rango: {date_range.start} - {date_range.end}
+                  </p>
+                  <p className="text-2xl font-bold text-blue-600">{total} Cumpleañeros</p>
+                </div>
+                <Button onClick={() => window.print()} variant="outline" size="sm">
+                  <Printer className="h-4 w-4 mr-2" />
+                  Imprimir
+                </Button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4 font-semibold">Nombre</th>
+                      <th className="text-left py-3 px-4 font-semibold">Apellido</th>
+                      <th className="text-left py-3 px-4 font-semibold">Fecha de Nacimiento</th>
+                      <th className="text-left py-3 px-4 font-semibold">Teléfono</th>
+                      <th className="text-left py-3 px-4 font-semibold">Dirección</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {birthdays.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="text-center py-8 text-gray-500">
+                          No hay cumpleañeros en este rango de fechas
+                        </td>
+                      </tr>
+                    ) : (
+                      birthdays.map((person) => (
+                        <tr key={person.id} className="border-b hover:bg-gray-50">
+                          <td className="py-3 px-4">🎁 {person.nombre}</td>
+                          <td className="py-3 px-4">{person.apellido}</td>
+                          <td className="py-3 px-4">
+                            {new Date(person.fecha_nacimiento + 'T00:00:00').toLocaleDateString('es-ES', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </td>
+                          <td className="py-3 px-4">{person.telefono || '-'}</td>
+                          <td className="py-3 px-4">{person.direccion || '-'}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6" data-testid="reports-page">
       <div>
