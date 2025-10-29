@@ -99,6 +99,7 @@ export default function Members() {
       nombre: member.nombre,
       apellido: member.apellido,
       direccion: member.direccion,
+      fecha_nacimiento: member.fecha_nacimiento || '',
       telefono: member.telefono,
     });
     setIsOpen(true);
@@ -110,6 +111,7 @@ export default function Members() {
       nombre: '',
       apellido: '',
       direccion: '',
+      fecha_nacimiento: '',
       telefono: '',
     });
   };
