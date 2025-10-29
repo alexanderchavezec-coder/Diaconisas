@@ -172,6 +172,16 @@ export default function Members() {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="fecha_nacimiento">Fecha de Nacimiento</Label>
+                <Input
+                  id="fecha_nacimiento"
+                  type="date"
+                  data-testid="member-fecha-nacimiento-input"
+                  value={formData.fecha_nacimiento}
+                  onChange={(e) => setFormData({ ...formData, fecha_nacimiento: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="telefono">Teléfono</Label>
                 <Input
                   id="telefono"
