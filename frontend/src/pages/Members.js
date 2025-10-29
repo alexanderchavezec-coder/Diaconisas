@@ -222,6 +222,7 @@ export default function Members() {
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Nombre</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Apellido</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Dirección</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Fecha de Nacimiento</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Teléfono</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Acciones</th>
                 </tr>
@@ -229,7 +230,7 @@ export default function Members() {
               <tbody>
                 {filteredMembers.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="text-center py-8 text-gray-500">
+                    <td colSpan="6" className="text-center py-8 text-gray-500">
                       No hay miembros registrados
                     </td>
                   </tr>
@@ -239,6 +240,7 @@ export default function Members() {
                       <td className="py-3 px-4">{member.nombre}</td>
                       <td className="py-3 px-4">{member.apellido}</td>
                       <td className="py-3 px-4">{member.direccion}</td>
+                      <td className="py-3 px-4">{member.fecha_nacimiento || '-'}</td>
                       <td className="py-3 px-4">{member.telefono}</td>
                       <td className="py-3 px-4">
                         <div className="flex gap-2">
