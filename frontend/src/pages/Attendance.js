@@ -211,6 +211,8 @@ export default function Attendance() {
       const birthMonth = birthParts[1];
       const birthDay = birthParts[2];
       
+      console.log(`Checking birthday: ${fechaNacimiento}, today: ${todayMonth}-${todayDay}, match: ${todayMonth === birthMonth && todayDay === birthDay}`);
+      
       return todayMonth === birthMonth && todayDay === birthDay;
     };
 
