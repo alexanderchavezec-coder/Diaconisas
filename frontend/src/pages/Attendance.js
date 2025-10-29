@@ -197,11 +197,29 @@ export default function Attendance() {
       );
     }
 
+    // Helper function to check if today is someone's birthday
+    const isBirthday = (fechaNacimiento) => {
+      if (!fechaNacimiento) return false;
+      const today = new Date();
+      const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+      const todayDay = String(today.getDate()).padStart(2, '0');
+      
+      // fechaNacimiento format: YYYY-MM-DD
+      const birthParts = fechaNacimiento.split('-');
+      if (birthParts.length !== 3) return false;
+      
+      const birthMonth = birthParts[1];
+      const birthDay = birthParts[2];
+      
+      return todayMonth === birthMonth && todayDay === birthDay;
+    };
+
     return (
       <div className="space-y-3">
         {people.map((person) => {
           const key = `${tipo}-${person.id}`;
           const name = tipo === 'member' ? `${person.nombre} ${person.apellido}` : person.nombre;
+          const showBirthdayIcon = tipo === 'member' && isBirthday(person.fecha_nacimiento);
           // Check both 'visitor' and 'friend' keys for attendance
           const hasAttendanceToday = todayAttendance.has(key) || 
                                       (tipo === 'visitor' && todayAttendance.has(`friend-${person.id}`)) ||
@@ -223,6 +241,14 @@ export default function Attendance() {
               <Label htmlFor={key} className="flex-1 cursor-pointer text-base">
                 {name}
               </Label>
+              {showBirthdayIcon && (
+                <div 
+                  className="flex items-center justify-center"
+                  title="¡Feliz cumpleaños!"
+                >
+                  <span className="text-2xl animate-bounce">🎁</span>
+                </div>
+              )}
               {hasAttendanceToday && (
                 <div 
                   className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-sm"
