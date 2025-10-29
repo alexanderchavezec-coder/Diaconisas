@@ -83,6 +83,7 @@ class Member(BaseModel):
     nombre: str
     apellido: str
     direccion: str
+    fecha_nacimiento: Optional[str] = ""
     telefono: str
     fecha_registro: datetime = Field(default_factory=get_eastern_now)
 
@@ -90,6 +91,7 @@ class MemberCreate(BaseModel):
     nombre: str
     apellido: str
     direccion: str
+    fecha_nacimiento: Optional[str] = ""
     telefono: str
 
 class Visitor(BaseModel):
