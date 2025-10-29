@@ -26,7 +26,7 @@ class SheetsService:
             
             # Define expected headers for each sheet to avoid duplicate empty column issues
             self.expected_headers = {
-                'Miembros': ['id', 'nombre', 'apellido', 'direccion', 'telefono', 'fecha_registro'],
+                'Miembros': ['id', 'nombre', 'apellido', 'direccion', 'fecha_nacimiento', 'telefono', 'fecha_registro'],
                 'Amigos': ['id', 'nombre', 'de_donde_viene', 'fecha_registro'],
                 'Asistencia': ['tipo', 'person_id', 'person_name', 'fecha', 'presente', 'id', 'created_at']
             }
