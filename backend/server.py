@@ -187,7 +187,7 @@ async def login(user_input: UserLogin):
 @api_router.post("/members", response_model=Member)
 async def create_member(member_input: MemberCreate, current_user: str = Depends(get_current_user)):
     member_obj = Member(**member_input.model_dump())
-    values = [member_obj.id, member_obj.nombre, member_obj.apellido, member_obj.direccion, member_obj.telefono, member_obj.fecha_registro.isoformat()]
+    values = [member_obj.id, member_obj.nombre, member_obj.apellido, member_obj.direccion, member_obj.fecha_nacimiento or '', member_obj.telefono, member_obj.fecha_registro.isoformat()]
     logger.info(f"Creating member: {member_obj.nombre} {member_obj.apellido}, ID: {member_obj.id}")
     logger.info(f"Values to append: {values}")
     try:
