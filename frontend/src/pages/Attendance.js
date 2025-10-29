@@ -200,9 +200,16 @@ export default function Attendance() {
     // Helper function to check if today is someone's birthday
     const isBirthday = (fechaNacimiento) => {
       if (!fechaNacimiento) return false;
-      const today = new Date();
-      const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
-      const todayDay = String(today.getDate()).padStart(2, '0');
+      
+      // Get today's date in New York timezone
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      const parts = formatter.formatToParts(new Date());
+      const todayMonth = parts.find(p => p.type === 'month').value;
+      const todayDay = parts.find(p => p.type === 'day').value;
       
       // fechaNacimiento format: YYYY-MM-DD
       const birthParts = fechaNacimiento.split('-');
@@ -210,8 +217,6 @@ export default function Attendance() {
       
       const birthMonth = birthParts[1];
       const birthDay = birthParts[2];
-      
-      console.log(`Checking birthday: ${fechaNacimiento}, today: ${todayMonth}-${todayDay}, match: ${todayMonth === birthMonth && todayDay === birthDay}`);
       
       return todayMonth === birthMonth && todayDay === birthDay;
     };
