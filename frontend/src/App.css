@@ -161,4 +161,22 @@ input, select, textarea {
   .border-b-2 {
     border-bottom: 2px solid #333 !important;
   }
+  
+  /* Ensure tables print correctly */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+  
+  th, td {
+    color: black !important;
+    border-color: #333 !important;
+  }
+}
+
+@media screen {
+  /* Ensure print content is hidden on screen */
+  .print-content {
+    display: none !important;
+  }
 }
