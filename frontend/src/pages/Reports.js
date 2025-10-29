@@ -640,6 +640,7 @@ export default function Reports() {
         <div data-testid="report-results">
           {reportType === 'date-range' && renderDateRangeReport()}
           {reportType === 'collective' && renderCollectiveReport()}
+          {reportType === 'birthdays' && renderBirthdaysReport()}
         </div>
       )}
 
