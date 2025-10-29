@@ -244,6 +244,7 @@ async def get_member(member_id: str, current_user: str = Depends(get_current_use
         nombre=record.get('nombre', ''),
         apellido=record.get('apellido', ''),
         direccion=record.get('direccion', ''),
+        fecha_nacimiento=record.get('fecha_nacimiento', ''),
         telefono=str(record.get('telefono', '')),
         fecha_registro=parse_fecha_registro(record.get('fecha_registro'))
     )
