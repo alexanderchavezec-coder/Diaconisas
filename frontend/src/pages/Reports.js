@@ -485,6 +485,7 @@ export default function Reports() {
                   <SelectItem value="date-range">Por Rango de Fecha</SelectItem>
                   <SelectItem value="collective">Colectivo (Gráfico)</SelectItem>
                   <SelectItem value="visitors-day">Amigos del Día</SelectItem>
+                  <SelectItem value="birthdays">Cumpleañeros</SelectItem>
                 </SelectContent>
               </Select>
             </div>
