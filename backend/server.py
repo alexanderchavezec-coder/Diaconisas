@@ -551,6 +551,70 @@ async def get_collective_report(start: str, end: str, current_user: str = Depend
     total_present = sum(dates[d]['total'] for d in dates)
     return {"date_range": {"start": start, "end": end}, "by_date": dates, "total_records": total_records, "total_present": total_present}
 
+@api_router.get("/reports/birthdays")
+async def get_birthdays_report(start: str, end: str, current_user: str = Depends(get_current_user)):
+    """Get members with birthdays in a date range (month-day comparison)"""
+    members_cached = sheets_cache.get('Miembros')
+    members = members_cached if members_cached else sheets_service.read_all('Miembros')
+    if not members_cached:
+        sheets_cache.set('Miembros', members)
+    
+    # Parse start and end dates to get month-day ranges
+    start_parts = start.split('-')
+    end_parts = end.split('-')
+    
+    if len(start_parts) != 3 or len(end_parts) != 3:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+    
+    start_month_day = f"{start_parts[1]}-{start_parts[2]}"
+    end_month_day = f"{end_parts[1]}-{end_parts[2]}"
+    
+    birthdays = []
+    for member in members:
+        if not member.get('id') or not member.get('fecha_nacimiento'):
+            continue
+        
+        birth_date = member.get('fecha_nacimiento', '')
+        birth_parts = birth_date.split('-')
+        
+        if len(birth_parts) != 3:
+            continue
+        
+        birth_month_day = f"{birth_parts[1]}-{birth_parts[2]}"
+        
+        # Check if birthday falls within range (handles same month or cross-month)
+        if start_month_day <= end_month_day:
+            # Normal case: both dates in same year span
+            if start_month_day <= birth_month_day <= end_month_day:
+                birthdays.append({
+                    'id': member.get('id'),
+                    'nombre': member.get('nombre', ''),
+                    'apellido': member.get('apellido', ''),
+                    'fecha_nacimiento': birth_date,
+                    'telefono': member.get('telefono', ''),
+                    'direccion': member.get('direccion', '')
+                })
+        else:
+            # Cross-year case: e.g., Dec 25 to Jan 5
+            if birth_month_day >= start_month_day or birth_month_day <= end_month_day:
+                birthdays.append({
+                    'id': member.get('id'),
+                    'nombre': member.get('nombre', ''),
+                    'apellido': member.get('apellido', ''),
+                    'fecha_nacimiento': birth_date,
+                    'telefono': member.get('telefono', ''),
+                    'direccion': member.get('direccion', '')
+                })
+    
+    # Sort by month-day
+    birthdays.sort(key=lambda x: x['fecha_nacimiento'].split('-')[1] + '-' + x['fecha_nacimiento'].split('-')[2])
+    
+    return {
+        "date_range": {"start": start, "end": end},
+        "birthdays": birthdays,
+        "total": len(birthdays)
+    }
+
 @api_router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
     members = sheets_cache.get('Miembros') or sheets_service.read_all('Miembros')
