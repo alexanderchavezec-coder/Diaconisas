@@ -257,10 +257,10 @@ async def update_member(member_id: str, member_input: MemberCreate, current_user
     fecha_registro_str = record.get('fecha_registro', '').strip()
     if not fecha_registro_str:
         fecha_registro_str = get_eastern_now().isoformat()
-    values = [member_id, member_input.nombre, member_input.apellido, member_input.direccion, member_input.telefono, fecha_registro_str]
+    values = [member_id, member_input.nombre, member_input.apellido, member_input.direccion, member_input.fecha_nacimiento or '', member_input.telefono, fecha_registro_str]
     sheets_service.update_row('Miembros', record['_row'], values)
     sheets_cache.invalidate('Miembros')
-    return Member(id=member_id, nombre=member_input.nombre, apellido=member_input.apellido, direccion=member_input.direccion, telefono=member_input.telefono, fecha_registro=parse_fecha_registro(fecha_registro_str))
+    return Member(id=member_id, nombre=member_input.nombre, apellido=member_input.apellido, direccion=member_input.direccion, fecha_nacimiento=member_input.fecha_nacimiento, telefono=member_input.telefono, fecha_registro=parse_fecha_registro(fecha_registro_str))
 
 @api_router.delete("/members/{member_id}")
 async def delete_member(member_id: str, current_user: str = Depends(get_current_user)):
