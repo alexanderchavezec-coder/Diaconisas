@@ -469,8 +469,9 @@ export default function Reports() {
     const { birthdays, total, date_range } = reportData;
 
     return (
-      <div className="space-y-6 no-print">
-        <Card>
+      <div className="space-y-6">
+        {/* Screen version */}
+        <Card className="print:hidden">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5" />
@@ -533,6 +534,58 @@ export default function Reports() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Print version - Simple and clean */}
+        <div className="hidden print:block print-content">
+          <div className="text-center mb-8 pb-4 border-b-2 border-gray-800">
+            <h1 className="text-3xl font-bold mb-2" style={{fontFamily: 'Playfair Display, serif'}}>
+              🎁 Reporte de Cumpleañeros
+            </h1>
+            <p className="text-lg text-gray-700 mb-2">
+              Rango: {new Date(date_range.start + 'T00:00:00').toLocaleDateString('es-ES', { month: 'long', day: 'numeric' })} - {new Date(date_range.end + 'T00:00:00').toLocaleDateString('es-ES', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+            <p className="text-lg font-semibold text-gray-800">
+              Total: {total} Cumpleañeros
+            </p>
+          </div>
+
+          {birthdays.length === 0 ? (
+            <p className="text-center text-gray-600 py-8">
+              No hay cumpleañeros en este rango de fechas
+            </p>
+          ) : (
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b-2 border-gray-800">
+                  <th className="text-left py-3 px-2 font-bold">#</th>
+                  <th className="text-left py-3 px-2 font-bold">Nombre Completo</th>
+                  <th className="text-left py-3 px-2 font-bold">Fecha de Nacimiento</th>
+                  <th className="text-left py-3 px-2 font-bold">Teléfono</th>
+                </tr>
+              </thead>
+              <tbody>
+                {birthdays.map((person, index) => (
+                  <tr key={person.id} className="border-b border-gray-300">
+                    <td className="py-3 px-2 font-semibold text-gray-700">{index + 1}.</td>
+                    <td className="py-3 px-2">
+                      <span className="font-semibold text-gray-900">
+                        🎁 {person.nombre} {person.apellido}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 text-gray-700">
+                      {new Date(person.fecha_nacimiento + 'T00:00:00').toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </td>
+                    <td className="py-3 px-2 text-gray-700">{person.telefono || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     );
   };
