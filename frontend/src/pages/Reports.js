@@ -59,6 +59,10 @@ export default function Reports() {
         response = await axios.get(
           `${API}/reports/collective?start=${startDate}&end=${endDate}`
         );
+      } else if (reportType === 'birthdays') {
+        response = await axios.get(
+          `${API}/reports/birthdays?start=${startDate}&end=${endDate}`
+        );
       }
       setReportData(response.data);
       setVisitorsData(null);
