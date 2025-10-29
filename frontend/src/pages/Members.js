@@ -19,6 +19,7 @@ export default function Members() {
     nombre: '',
     apellido: '',
     direccion: '',
+    fecha_nacimiento: '',
     telefono: '',
   });
 
