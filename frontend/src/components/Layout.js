@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, Users, UserPlus, Calendar, FileText, LogOut } from 'lucide-react';
+import { Home, Users, UserPlus, Calendar, FileText, LogOut, BarChart3 } from 'lucide-react';
 
 export default function Layout({ onLogout }) {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ export default function Layout({ onLogout }) {
     { path: '/visitors', icon: UserPlus, label: 'Amigos', testId: 'nav-visitors' },
     { path: '/attendance', icon: Calendar, label: 'Asistencia', testId: 'nav-attendance' },
     { path: '/reports', icon: FileText, label: 'Reportes', testId: 'nav-reports' },
+    { path: '/statistics', icon: BarChart3, label: 'Estadísticas', testId: 'nav-statistics' },
   ];
 
   return (
