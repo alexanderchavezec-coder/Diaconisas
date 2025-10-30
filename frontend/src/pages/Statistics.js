@@ -109,10 +109,13 @@ export default function Statistics() {
       setAttendance(attendanceData.records);
 
       // Calculate statistics
-      calculateStatistics(membersData, friendsData, attendanceData);
+      calculateStatistics(membersData, friendsData, attendanceData, start, end);
       
       // Calculate absent members
       calculateAbsentMembers(membersData, attendanceData.records);
+      
+      // Update current period text
+      updatePeriodText(start, end);
 
     } catch (error) {
       toast.error('Error al cargar estadísticas');
