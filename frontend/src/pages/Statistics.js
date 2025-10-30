@@ -261,12 +261,38 @@ export default function Statistics() {
             {periodType === 'specific-month' && (
               <div>
                 <Label htmlFor="month-select">Seleccionar Mes</Label>
-                <Input
-                  type="month"
-                  value={selectedMonth}
-                  onChange={(e) => handleMonthChange(e.target.value)}
-                  className="w-full"
-                />
+                <Select value={selectedMonth} onValueChange={handleMonthChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecciona un mes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(() => {
+                      const months = [];
+                      const monthNames = [
+                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                      ];
+                      
+                      // Generate last 12 months and next 6 months
+                      const now = new Date();
+                      for (let i = 12; i >= -6; i--) {
+                        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const monthName = monthNames[date.getMonth()];
+                        const value = `${year}-${month}`;
+                        const label = `${monthName} ${year}`;
+                        months.push({ value, label });
+                      }
+                      
+                      return months.map(m => (
+                        <SelectItem key={m.value} value={m.value}>
+                          {m.label}
+                        </SelectItem>
+                      ));
+                    })()}
+                  </SelectContent>
+                </Select>
               </div>
             )}
 
