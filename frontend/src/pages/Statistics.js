@@ -259,40 +259,64 @@ export default function Statistics() {
             </div>
 
             {periodType === 'specific-month' && (
-              <div>
-                <Label htmlFor="month-select">Seleccionar Mes</Label>
-                <Select value={selectedMonth} onValueChange={handleMonthChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecciona un mes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(() => {
-                      const months = [];
-                      const monthNames = [
-                        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-                      ];
-                      
-                      // Generate last 12 months and next 6 months
-                      const now = new Date();
-                      for (let i = 12; i >= -6; i--) {
-                        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const monthName = monthNames[date.getMonth()];
-                        const value = `${year}-${month}`;
-                        const label = `${monthName} ${year}`;
-                        months.push({ value, label });
-                      }
-                      
-                      return months.map(m => (
-                        <SelectItem key={m.value} value={m.value}>
-                          {m.label}
-                        </SelectItem>
-                      ));
-                    })()}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="month-select">Mes</Label>
+                  <Select 
+                    value={selectedMonth.split('-')[1] || String(currentMonth).padStart(2, '0')} 
+                    onValueChange={(month) => {
+                      const year = selectedMonth.split('-')[0] || currentYear;
+                      handleMonthChange(`${year}-${month}`);
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecciona el mes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="01">Enero</SelectItem>
+                      <SelectItem value="02">Febrero</SelectItem>
+                      <SelectItem value="03">Marzo</SelectItem>
+                      <SelectItem value="04">Abril</SelectItem>
+                      <SelectItem value="05">Mayo</SelectItem>
+                      <SelectItem value="06">Junio</SelectItem>
+                      <SelectItem value="07">Julio</SelectItem>
+                      <SelectItem value="08">Agosto</SelectItem>
+                      <SelectItem value="09">Septiembre</SelectItem>
+                      <SelectItem value="10">Octubre</SelectItem>
+                      <SelectItem value="11">Noviembre</SelectItem>
+                      <SelectItem value="12">Diciembre</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="year-select">Año</Label>
+                  <Select 
+                    value={selectedMonth.split('-')[0] || currentYear} 
+                    onValueChange={(year) => {
+                      const month = selectedMonth.split('-')[1] || String(currentMonth).padStart(2, '0');
+                      handleMonthChange(`${year}-${month}`);
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecciona el año" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(() => {
+                        const years = [];
+                        const currentYearNum = parseInt(currentYear);
+                        for (let y = currentYearNum - 2; y <= currentYearNum + 2; y++) {
+                          years.push(
+                            <SelectItem key={y} value={String(y)}>
+                              {y}
+                            </SelectItem>
+                          );
+                        }
+                        return years;
+                      })()}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             )}
 
