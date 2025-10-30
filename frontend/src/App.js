@@ -8,6 +8,7 @@ import Members from './pages/Members';
 import Visitors from './pages/Visitors';
 import Attendance from './pages/Attendance';
 import Reports from './pages/Reports';
+import Statistics from './pages/Statistics';
 import Layout from './components/Layout';
 import { Toaster } from 'sonner';
 
