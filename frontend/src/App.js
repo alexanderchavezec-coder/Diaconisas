@@ -77,6 +77,7 @@ function App() {
             <Route path="visitors" element={<Visitors />} />
             <Route path="attendance" element={<Attendance />} />
             <Route path="reports" element={<Reports />} />
+            <Route path="statistics" element={<Statistics />} />
           </Route>
         </Routes>
       </BrowserRouter>
