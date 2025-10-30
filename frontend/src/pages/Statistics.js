@@ -232,9 +232,74 @@ export default function Statistics() {
       <div>
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Estadísticas</h1>
         <p className="text-gray-600 text-lg">
-          Análisis de asistencia del mes actual ({month}/{year})
+          Análisis de asistencia - {currentPeriodText}
         </p>
       </div>
+
+      {/* Date Selection Controls */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Seleccionar Período
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="period-type">Tipo de Período</Label>
+              <Select value={periodType} onValueChange={handlePeriodTypeChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona el tipo de período" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="current-month">Mes Actual</SelectItem>
+                  <SelectItem value="specific-month">Mes Específico</SelectItem>
+                  <SelectItem value="custom-range">Rango Personalizado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {periodType === 'specific-month' && (
+              <div>
+                <Label htmlFor="month-select">Seleccionar Mes</Label>
+                <Input
+                  type="month"
+                  value={selectedMonth}
+                  onChange={(e) => handleMonthChange(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+            )}
+
+            {periodType === 'custom-range' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="start-date">Fecha Inicio</Label>
+                  <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="end-date">Fecha Fin</Label>
+                  <Input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-end">
+                  <Button onClick={handleCustomRangeSubmit} className="w-full">
+                    Aplicar Rango
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Screen version */}
       <div className="print:hidden space-y-6">
