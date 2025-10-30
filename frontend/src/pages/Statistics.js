@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API } from '../App';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { BarChart3, Users, TrendingUp, Percent, Printer, UserX } from 'lucide-react';
+import { BarChart3, Users, TrendingUp, Percent, Printer, UserX, Calendar } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 export default function Statistics() {
@@ -13,7 +16,14 @@ export default function Statistics() {
   const [attendance, setAttendance] = useState([]);
   const [absentMembers, setAbsentMembers] = useState([]);
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  
+  // Date selection states
+  const [periodType, setPeriodType] = useState('current-month'); // 'current-month', 'specific-month', 'custom-range'
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [currentPeriodText, setCurrentPeriodText] = useState('');
 
   // Get current month dates in NY timezone
   const getTodayInNY = () => {
@@ -31,23 +41,63 @@ export default function Statistics() {
     return { year, month, day };
   };
 
-  const { year, month } = getTodayInNY();
-  const firstDay = `${year}-${month}-01`;
-  const lastDayOfMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
-  const lastDay = `${year}-${month}-${String(lastDayOfMonth).padStart(2, '0')}`;
+  const { year: currentYear, month: currentMonth, day: currentDay } = getTodayInNY();
 
   useEffect(() => {
-    fetchData();
+    // Initialize with current month
+    const firstDay = `${currentYear}-${currentMonth}-01`;
+    const lastDayOfMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
+    const lastDay = `${currentYear}-${currentMonth}-${String(lastDayOfMonth).padStart(2, '0')}`;
+    setStartDate(firstDay);
+    setEndDate(lastDay);
+    setSelectedMonth(`${currentYear}-${currentMonth}`);
+    fetchData(firstDay, lastDay);
   }, []);
 
-  const fetchData = async () => {
+  const handlePeriodTypeChange = (type) => {
+    setPeriodType(type);
+    
+    if (type === 'current-month') {
+      const firstDay = `${currentYear}-${currentMonth}-01`;
+      const lastDayOfMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
+      const lastDay = `${currentYear}-${currentMonth}-${String(lastDayOfMonth).padStart(2, '0')}`;
+      setStartDate(firstDay);
+      setEndDate(lastDay);
+      fetchData(firstDay, lastDay);
+    }
+  };
+
+  const handleMonthChange = (monthValue) => {
+    setSelectedMonth(monthValue);
+    const [year, month] = monthValue.split('-');
+    const firstDay = `${year}-${month}-01`;
+    const lastDayOfMonth = new Date(parseInt(year), parseInt(month), 0).getDate();
+    const lastDay = `${year}-${month}-${String(lastDayOfMonth).padStart(2, '0')}`;
+    setStartDate(firstDay);
+    setEndDate(lastDay);
+    fetchData(firstDay, lastDay);
+  };
+
+  const handleCustomRangeSubmit = () => {
+    if (!startDate || !endDate) {
+      toast.error('Por favor selecciona ambas fechas');
+      return;
+    }
+    if (startDate > endDate) {
+      toast.error('La fecha de inicio debe ser anterior a la fecha de fin');
+      return;
+    }
+    fetchData(startDate, endDate);
+  };
+
+  const fetchData = async (start, end) => {
     setLoading(true);
     try {
       // Fetch all data
       const [membersRes, friendsRes, attendanceRes] = await Promise.all([
         axios.get(`${API}/members`),
         axios.get(`${API}/visitors`),
-        axios.get(`${API}/reports/by-date-range?start=${firstDay}&end=${lastDay}&tipo=all`)
+        axios.get(`${API}/reports/by-date-range?start=${start}&end=${end}&tipo=all`)
       ]);
 
       const membersData = membersRes.data;
