@@ -126,14 +126,16 @@ export default function Statistics() {
   };
 
   const updatePeriodText = (start, end) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+    // Add time component to avoid timezone issues
+    const startDate = new Date(start + 'T00:00:00');
+    const endDate = new Date(end + 'T00:00:00');
     
     const formatDate = (date) => {
       return date.toLocaleDateString('es-ES', { 
         year: 'numeric', 
         month: 'long', 
-        day: 'numeric' 
+        day: 'numeric',
+        timeZone: 'America/New_York'
       });
     };
     
@@ -141,7 +143,8 @@ export default function Statistics() {
       // Same month
       const monthYear = startDate.toLocaleDateString('es-ES', { 
         year: 'numeric', 
-        month: 'long' 
+        month: 'long',
+        timeZone: 'America/New_York'
       });
       setCurrentPeriodText(monthYear);
     } else {
