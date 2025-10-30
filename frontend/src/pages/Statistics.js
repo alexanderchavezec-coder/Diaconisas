@@ -126,30 +126,25 @@ export default function Statistics() {
   };
 
   const updatePeriodText = (start, end) => {
-    // Add time component to avoid timezone issues
-    const startDate = new Date(start + 'T00:00:00');
-    const endDate = new Date(end + 'T00:00:00');
+    // Extract year and month directly from the string to avoid timezone issues
+    const [startYear, startMonth, startDay] = start.split('-');
+    const [endYear, endMonth, endDay] = end.split('-');
     
-    const formatDate = (date) => {
-      return date.toLocaleDateString('es-ES', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        timeZone: 'America/New_York'
-      });
-    };
+    const monthNames = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
     
     if (start.substring(0, 7) === end.substring(0, 7)) {
-      // Same month
-      const monthYear = startDate.toLocaleDateString('es-ES', { 
-        year: 'numeric', 
-        month: 'long',
-        timeZone: 'America/New_York'
-      });
-      setCurrentPeriodText(monthYear);
+      // Same month - show month and year
+      const monthIndex = parseInt(startMonth) - 1;
+      const monthName = monthNames[monthIndex];
+      setCurrentPeriodText(`${monthName} de ${startYear}`);
     } else {
-      // Different months or custom range
-      setCurrentPeriodText(`${formatDate(startDate)} - ${formatDate(endDate)}`);
+      // Different months or custom range - show full dates
+      const startMonthName = monthNames[parseInt(startMonth) - 1];
+      const endMonthName = monthNames[parseInt(endMonth) - 1];
+      setCurrentPeriodText(`${startDay} de ${startMonthName} de ${startYear} - ${endDay} de ${endMonthName} de ${endYear}`);
     }
   };
 
