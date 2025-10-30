@@ -474,7 +474,7 @@ export default function Statistics() {
                 Miembros Ausentes Este Mes
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
-                Miembros sin registro de asistencia en {month}/{year}
+                Miembros sin registro de asistencia en {currentPeriodText}
               </p>
             </div>
             <Button onClick={printAbsentReport} variant="outline" size="sm">
