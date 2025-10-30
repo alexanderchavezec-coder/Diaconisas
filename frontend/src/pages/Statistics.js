@@ -125,7 +125,32 @@ export default function Statistics() {
     }
   };
 
-  const calculateStatistics = (membersData, friendsData, attendanceData) => {
+  const updatePeriodText = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    
+    const formatDate = (date) => {
+      return date.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    };
+    
+    if (start.substring(0, 7) === end.substring(0, 7)) {
+      // Same month
+      const monthYear = startDate.toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'long' 
+      });
+      setCurrentPeriodText(monthYear);
+    } else {
+      // Different months or custom range
+      setCurrentPeriodText(`${formatDate(startDate)} - ${formatDate(endDate)}`);
+    }
+  };
+
+  const calculateStatistics = (membersData, friendsData, attendanceData, start, end) => {
     const totalMembers = membersData.length;
     const totalFriends = friendsData.length;
     const totalPeople = totalMembers + totalFriends;
@@ -135,10 +160,15 @@ export default function Statistics() {
     const friendAttendance = attendanceData.records.filter(r => r.tipo === 'friend' && r.presente).length;
     const totalAttendance = memberAttendance + friendAttendance;
 
+    // Calculate days in period for attendance rate calculation
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const daysInPeriod = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
     // Calculate attendance rate
-    const memberAttendanceRate = totalMembers > 0 ? (memberAttendance / (totalMembers * lastDayOfMonth)) * 100 : 0;
-    const friendAttendanceRate = totalFriends > 0 ? (friendAttendance / (totalFriends * lastDayOfMonth)) * 100 : 0;
-    const overallAttendanceRate = totalPeople > 0 ? (totalAttendance / (totalPeople * lastDayOfMonth)) * 100 : 0;
+    const memberAttendanceRate = totalMembers > 0 ? (memberAttendance / (totalMembers * daysInPeriod)) * 100 : 0;
+    const friendAttendanceRate = totalFriends > 0 ? (friendAttendance / (totalFriends * daysInPeriod)) * 100 : 0;
+    const overallAttendanceRate = totalPeople > 0 ? (totalAttendance / (totalPeople * daysInPeriod)) * 100 : 0;
 
     setStats({
       totalMembers,
