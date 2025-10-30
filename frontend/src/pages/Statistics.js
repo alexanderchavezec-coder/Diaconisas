@@ -226,12 +226,11 @@ export default function Statistics() {
 
   return (
     <div className="space-y-6" data-testid="statistics-page">
-      {/* Header */}
+      {/* Header - Optimized */}
       <div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Estadísticas</h1>
-        <p className="text-gray-600 text-lg">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Análisis de asistencia - {currentPeriodText}
-        </p>
+        </h1>
       </div>
 
       {/* Date Selection Controls */}
@@ -245,7 +244,6 @@ export default function Statistics() {
         <CardContent>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="period-type">Tipo de Período</Label>
               <Select value={periodType} onValueChange={handlePeriodTypeChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona el tipo de período" />
