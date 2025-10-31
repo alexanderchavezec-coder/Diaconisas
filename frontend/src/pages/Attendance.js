@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Calendar, Save, Search } from 'lucide-react';
+import { Calendar, Save, Search, UserPlus } from 'lucide-react';
 
 export default function Attendance() {
   const [members, setMembers] = useState([]);
@@ -17,6 +18,12 @@ export default function Attendance() {
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Friend modal states
+  const [isFriendModalOpen, setIsFriendModalOpen] = useState(false);
+  const [friendFormData, setFriendFormData] = useState({
+    nombre: '',
+    de_donde_viene: '',
+  });
   // Get New York date correctly
   const getTodayInNY = () => {
     const now = new Date();
