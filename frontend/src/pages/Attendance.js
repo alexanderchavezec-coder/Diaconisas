@@ -208,26 +208,12 @@ export default function Attendance() {
       // Show success message
       toast.success('Amigo registrado exitosamente');
       
-      // Then refresh the friends list
-      await fetchFriends();
-      
-      // Also refresh today's attendance to show the new friend with attendance marked
-      await fetchTodayAttendance();
+      // Then refresh the data (this will update friends list and attendance)
+      await fetchData();
       
     } catch (error) {
       console.error('Error creating friend:', error);
-      // Only show error if the request actually failed
-      if (error.response && error.response.status >= 400) {
-        toast.error('Error al guardar amigo');
-      } else {
-        // If it's just a refresh error, still show success and close modal
-        setIsFriendModalOpen(false);
-        resetFriendForm();
-        toast.success('Amigo registrado exitosamente');
-        // Try to refresh anyway
-        fetchFriends().catch(() => {});
-        fetchTodayAttendance().catch(() => {});
-      }
+      toast.error('Error al guardar amigo');
     }
   };
 
