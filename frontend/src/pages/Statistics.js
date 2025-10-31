@@ -542,10 +542,10 @@ export default function Statistics() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <UserX className="h-5 w-5" />
-                Miembros Ausentes Este Mes
+                Miembros Ausentes
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
-                Miembros sin registro de asistencia en {currentPeriodText}
+                Miembros sin registro de asistencia {getAbsentMembersDescription()}
               </p>
             </div>
             <Button onClick={printAbsentReport} variant="outline" size="sm">
