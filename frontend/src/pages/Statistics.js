@@ -593,7 +593,7 @@ export default function Statistics() {
             Reporte de Miembros Ausentes
           </h1>
           <p className="text-lg text-gray-700 mb-2">
-            Período: {currentPeriodText}
+            Período: {getAbsentMembersDescription()}
           </p>
           <p className="text-lg font-semibold text-gray-800">
             Total Ausentes: {absentMembers.length} de {stats.totalMembers} miembros
