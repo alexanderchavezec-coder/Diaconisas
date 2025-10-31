@@ -195,6 +195,27 @@ export default function Attendance() {
     }
   };
 
+  // Friend modal functions
+  const handleFriendSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API}/visitors`, friendFormData);
+      toast.success('Amigo registrado exitosamente');
+      fetchFriends(); // Refresh the friends list
+      setIsFriendModalOpen(false);
+      resetFriendForm();
+    } catch (error) {
+      toast.error('Error al guardar amigo');
+    }
+  };
+
+  const resetFriendForm = () => {
+    setFriendFormData({
+      nombre: '',
+      de_donde_viene: '',
+    });
+  };
+
   const renderAttendanceList = (people, tipo) => {
     if (people.length === 0) {
       return (
