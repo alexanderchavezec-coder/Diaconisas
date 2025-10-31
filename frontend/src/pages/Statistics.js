@@ -599,6 +599,18 @@ export default function Statistics() {
 
       {/* Print version - Absent Members Only */}
       <div className="hidden print:block print-content">
+        {/* Print Header */}
+        <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-gray-800">
+          <img 
+            src="/adventist-logo.png" 
+            alt="Logo Adventista" 
+            className="h-20 object-contain"
+          />
+          <h2 className="text-2xl font-bold text-gray-900">
+            Departamento de Diaconisas
+          </h2>
+        </div>
+        
         <div className="text-center mb-8 pb-4 border-b-2 border-gray-800">
           <h1 className="text-3xl font-bold mb-2" style={{fontFamily: 'Playfair Display, serif'}}>
             Reporte de Miembros Ausentes
