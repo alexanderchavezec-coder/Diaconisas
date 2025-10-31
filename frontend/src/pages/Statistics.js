@@ -148,6 +148,31 @@ export default function Statistics() {
     }
   };
 
+  // Generate descriptive text for absent members report
+  const getAbsentMembersDescription = () => {
+    if (!startDate || !endDate) return '';
+    
+    const [startYear, startMonth, startDay] = startDate.split('-');
+    const [endYear, endMonth, endDay] = endDate.split('-');
+    
+    const monthNames = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+    
+    if (startDate.substring(0, 7) === endDate.substring(0, 7)) {
+      // Same month - show month and year
+      const monthIndex = parseInt(startMonth) - 1;
+      const monthName = monthNames[monthIndex];
+      return `${monthName} de ${startYear}`;
+    } else {
+      // Different months or custom range - show full date range
+      const startMonthName = monthNames[parseInt(startMonth) - 1];
+      const endMonthName = monthNames[parseInt(endMonth) - 1];
+      return `del ${parseInt(startDay)} de ${startMonthName} de ${startYear} al ${parseInt(endDay)} de ${endMonthName} de ${endYear}`;
+    }
+  };
+
   const calculateStatistics = (membersData, friendsData, attendanceData, start, end) => {
     const totalMembers = membersData.length;
     const totalFriends = friendsData.length;
