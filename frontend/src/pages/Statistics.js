@@ -160,13 +160,24 @@ export default function Statistics() {
       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
     ];
     
+    // Check if it's the same month
     if (startDate.substring(0, 7) === endDate.substring(0, 7)) {
-      // Same month - show month and year
       const monthIndex = parseInt(startMonth) - 1;
       const monthName = monthNames[monthIndex];
-      return `${monthName} de ${startYear}`;
+      
+      // Check if it's the full month (day 1 to last day of month)
+      const lastDayOfMonth = new Date(parseInt(startYear), parseInt(startMonth), 0).getDate();
+      const isFullMonth = (parseInt(startDay) === 1 && parseInt(endDay) === lastDayOfMonth);
+      
+      if (isFullMonth) {
+        // Full month - just show "octubre de 2025"
+        return `${monthName} de ${startYear}`;
+      } else {
+        // Partial month - show date range within the month
+        return `del ${parseInt(startDay)} al ${parseInt(endDay)} de ${monthName} de ${startYear}`;
+      }
     } else {
-      // Different months or custom range - show full date range
+      // Different months - show full date range
       const startMonthName = monthNames[parseInt(startMonth) - 1];
       const endMonthName = monthNames[parseInt(endMonth) - 1];
       return `del ${parseInt(startDay)} de ${startMonthName} de ${startYear} al ${parseInt(endDay)} de ${endMonthName} de ${endYear}`;
