@@ -312,9 +312,65 @@ export default function Attendance() {
 
   return (
     <div className="space-y-6" data-testid="attendance-page">
-      <div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Registro de Asistencia</h1>
-        <p className="text-2xl font-bold text-gray-900">{displayDate}</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Registro de Asistencia</h1>
+          <p className="text-2xl font-bold text-gray-900">{displayDate}</p>
+        </div>
+        
+        {/* Add Friend Button */}
+        <Dialog open={isFriendModalOpen} onOpenChange={(open) => {
+          setIsFriendModalOpen(open);
+          if (!open) resetFriendForm();
+        }}>
+          <DialogTrigger asChild>
+            <Button 
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              size="lg"
+            >
+              <UserPlus className="mr-2 h-5 w-5" />
+              Agregar Amigo
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px] top-[20%]">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Agregar Nuevo Amigo</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleFriendSubmit} className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="friend-nombre">Nombre Completo</Label>
+                <Input
+                  id="friend-nombre"
+                  value={friendFormData.nombre}
+                  onChange={(e) => setFriendFormData({ ...friendFormData, nombre: e.target.value })}
+                  onFocus={(e) => {
+                    setTimeout(() => {
+                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                  }}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="friend-origen">De Dónde Viene</Label>
+                <Input
+                  id="friend-origen"
+                  value={friendFormData.de_donde_viene}
+                  onChange={(e) => setFriendFormData({ ...friendFormData, de_donde_viene: e.target.value })}
+                  onFocus={(e) => {
+                    setTimeout(() => {
+                      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                  }}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Guardar Amigo
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>
