@@ -51,7 +51,7 @@ export default function Login({ onLogin }) {
             Iniciar Sesión
           </CardTitle>
           <CardDescription className="text-base">
-            Departamento de Diaconisas
+            Departamento de Diaconisas - Control de Asistencia
           </CardDescription>
         </CardHeader>
         <CardContent>
