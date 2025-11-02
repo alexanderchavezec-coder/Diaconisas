@@ -29,8 +29,8 @@ export default function Layout({ onLogout }) {
               />
             </div>
             <div>
-              <h1 className="text-lg font-bold">Departamento de</h1>
-              <p className="text-lg font-bold">Diaconisas</p>
+              <p className="text-lg font-bold text-white">Departamento de</p>
+              <p className="text-lg font-bold text-white">Diaconisas</p>
             </div>
           </div>
         </div>
