@@ -51,7 +51,7 @@ export default function Login({ onLogin }) {
             Iniciar Sesión
           </CardTitle>
           <CardDescription className="text-base">
-            IASD Danbury - Control de Asistencia
+            Departamento de Diaconisas
           </CardDescription>
         </CardHeader>
         <CardContent>
