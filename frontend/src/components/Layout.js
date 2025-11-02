@@ -30,7 +30,7 @@ export default function Layout({ onLogout }) {
             </div>
             <div>
               <h1 className="text-xl font-bold">Departamento de</h1>
-              <p className="text-sm text-white/80">Diaconisas</p>
+              <p className="text-sm text-white/80 font-bold">Diaconisas</p>
             </div>
           </div>
         </div>
