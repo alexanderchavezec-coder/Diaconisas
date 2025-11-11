@@ -21,7 +21,7 @@ class SheetsService:
                 scopes=SCOPES
             )
             self.client = gspread.authorize(creds)
-            self.spreadsheet_id = '1kXfyAMTqZovXA6rzM2cYXbyoDYJdQwXs3-tdawvy-Aw'
+            self.spreadsheet_id = os.environ.get('SPREADSHEET_ID', '1kXfyAMTqZovXA6rzM2cYXbyoDYJdQwXs3-tdawvy-Aw')
             self.spreadsheet = self.client.open_by_key(self.spreadsheet_id)
             
             # Define expected headers for each sheet to avoid duplicate empty column issues
